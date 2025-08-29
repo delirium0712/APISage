@@ -1,0 +1,949 @@
+{
+  "statistics": {
+    "detectionDate": "2025-08-29T13:14:56.579Z",
+    "formats": {
+      "python": {
+        "sources": {
+          "infrastructure/vector_stores/store_factory.py": {
+            "lines": 255,
+            "tokens": 2196,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/vector_stores/qdrant_store.py": {
+            "lines": 344,
+            "tokens": 2928,
+            "sources": 1,
+            "clones": 3,
+            "duplicatedLines": 40,
+            "duplicatedTokens": 387,
+            "percentage": 11.63,
+            "percentageTokens": 13.22,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/vector_stores/pinecone_store.py": {
+            "lines": 333,
+            "tokens": 2628,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/vector_stores/milvus_store.py": {
+            "lines": 345,
+            "tokens": 2684,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/vector_stores/hybrid_store.py": {
+            "lines": 662,
+            "tokens": 6032,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/vector_stores/chroma_store.py": {
+            "lines": 357,
+            "tokens": 3283,
+            "sources": 1,
+            "clones": 3,
+            "duplicatedLines": 46,
+            "duplicatedTokens": 625,
+            "percentage": 12.89,
+            "percentageTokens": 19.04,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/vector_stores/base_store.py": {
+            "lines": 204,
+            "tokens": 1688,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/vector_stores/__init__.py": {
+            "lines": 19,
+            "tokens": 95,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/rerankers/semantic_reranker.py": {
+            "lines": 243,
+            "tokens": 2086,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/rerankers/reranker_factory.py": {
+            "lines": 306,
+            "tokens": 2051,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/rerankers/llm_reranker.py": {
+            "lines": 137,
+            "tokens": 536,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/rerankers/base_reranker.py": {
+            "lines": 135,
+            "tokens": 1000,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/rerankers/api_docs_reranker.py": {
+            "lines": 306,
+            "tokens": 2939,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/rerankers/__init__.py": {
+            "lines": 17,
+            "tokens": 75,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/llm_providers/provider_factory.py": {
+            "lines": 185,
+            "tokens": 1605,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/llm_providers/openai_direct_provider.py": {
+            "lines": 218,
+            "tokens": 1661,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/llm_providers/base_provider.py": {
+            "lines": 103,
+            "tokens": 736,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/llm_providers/__init__.py": {
+            "lines": 14,
+            "tokens": 63,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "agents/parsers/postman_parser.py": {
+            "lines": 393,
+            "tokens": 3588,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "agents/parsers/openapi_parser.py": {
+            "lines": 239,
+            "tokens": 2183,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "agents/parsers/markdown_parser.py": {
+            "lines": 313,
+            "tokens": 2805,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "agents/parsers/base_parser.py": {
+            "lines": 143,
+            "tokens": 1355,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "agents/parsers/__init__.py": {
+            "lines": 15,
+            "tokens": 69,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "agents/evaluation/quality_evaluator.py": {
+            "lines": 630,
+            "tokens": 5124,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "utils/redis_client.py": {
+            "lines": 566,
+            "tokens": 4534,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "utils/dependency_manager.py": {
+            "lines": 187,
+            "tokens": 1158,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "utils/database.py": {
+            "lines": 551,
+            "tokens": 3216,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "utils/__init__.py": {
+            "lines": 7,
+            "tokens": 31,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "sdk/search_engine.py": {
+            "lines": 519,
+            "tokens": 2913,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "sdk/rag_system.py": {
+            "lines": 373,
+            "tokens": 2177,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "sdk/config.py": {
+            "lines": 147,
+            "tokens": 901,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "sdk/__init__.py": {
+            "lines": 32,
+            "tokens": 128,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/llm_manager.py": {
+            "lines": 615,
+            "tokens": 4779,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "infrastructure/backend_manager.py": {
+            "lines": 476,
+            "tokens": 3685,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "demo/demo_flow_simple.py": {
+            "lines": 197,
+            "tokens": 1087,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "core/state.py": {
+            "lines": 520,
+            "tokens": 4327,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "core/orchestrator.py": {
+            "lines": 496,
+            "tokens": 3983,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "core/__init__.py": {
+            "lines": 7,
+            "tokens": 43,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "config/settings.py": {
+            "lines": 164,
+            "tokens": 1970,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "config/config_loader.py": {
+            "lines": 551,
+            "tokens": 3987,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "config/backends.py": {
+            "lines": 33,
+            "tokens": 234,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "api/routes.py": {
+            "lines": 424,
+            "tokens": 3340,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 22,
+            "duplicatedTokens": 176,
+            "percentage": 5.19,
+            "percentageTokens": 5.27,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "api/models.py": {
+            "lines": 281,
+            "tokens": 3403,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "api/main.py": {
+            "lines": 285,
+            "tokens": 1933,
+            "sources": 1,
+            "clones": 6,
+            "duplicatedLines": 84,
+            "duplicatedTokens": 568,
+            "percentage": 29.47,
+            "percentageTokens": 29.38,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "api/__init__.py": {
+            "lines": 7,
+            "tokens": 28,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "agents/evaluator.py": {
+            "lines": 436,
+            "tokens": 3492,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 8,
+            "duplicatedTokens": 108,
+            "percentage": 1.83,
+            "percentageTokens": 3.09,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "agents/document_processor.py": {
+            "lines": 558,
+            "tokens": 4622,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "agents/code_generator.py": {
+            "lines": 470,
+            "tokens": 2995,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 8,
+            "duplicatedTokens": 108,
+            "percentage": 1.7,
+            "percentageTokens": 3.61,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "agents/api_analyzer.py": {
+            "lines": 167,
+            "tokens": 1026,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "test_quality_analyzer.py": {
+            "lines": 107,
+            "tokens": 516,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "test_api_analyzer.py": {
+            "lines": 101,
+            "tokens": 393,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "__init__.py": {
+            "lines": 20,
+            "tokens": 74,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 14213,
+          "tokens": 110385,
+          "sources": 52,
+          "clones": 8,
+          "duplicatedLines": 104,
+          "duplicatedTokens": 986,
+          "percentage": 0.73,
+          "percentageTokens": 0.89,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      }
+    },
+    "total": {
+      "lines": 14213,
+      "tokens": 110385,
+      "sources": 52,
+      "clones": 8,
+      "duplicatedLines": 104,
+      "duplicatedTokens": 986,
+      "percentage": 0.73,
+      "percentageTokens": 0.89,
+      "newDuplicatedLines": 0,
+      "newClones": 0
+    }
+  },
+  "duplicates": [
+    {
+      "format": "python",
+      "lines": 18,
+      "fragment": ")\n            \n            # Convert results to standard format\n            documents = []\n            for result in results:\n                doc = {\n                    \"id\": result.id,\n                    \"score\": result.score,\n                    \"text\": result.payload.get(\"text\", \"\"),\n                    \"metadata\": result.payload.get(\"metadata\", {}),\n                    \"source\": result.payload.get(\"source\", \"\"),\n                    \"timestamp\": result.payload.get(\"timestamp\", \"\")\n                }\n                documents.append(doc)\n            \n            return documents\n        except Exception as e:\n            logger.error(\"qdrant_search_by_vector_failed\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "infrastructure/vector_stores/qdrant_store.py",
+        "start": 218,
+        "end": 235,
+        "startLoc": {
+          "line": 218,
+          "column": 13,
+          "position": 1786
+        },
+        "endLoc": {
+          "line": 235,
+          "column": 33,
+          "position": 1937
+        }
+      },
+      "secondFile": {
+        "name": "infrastructure/vector_stores/qdrant_store.py",
+        "start": 122,
+        "end": 139,
+        "startLoc": {
+          "line": 122,
+          "column": 13,
+          "position": 957
+        },
+        "endLoc": {
+          "line": 139,
+          "column": 23,
+          "position": 1108
+        }
+      }
+    },
+    {
+      "format": "python",
+      "lines": 7,
+      "fragment": ", error=str(e))\n            return False\n    \n    async def search_by_vector(self, vector: List[float], k: int = 5, filter_metadata: Dict[str, Any] = None) -> List[Dict[str, Any]]:\n        \"\"\"Search by vector embedding\"\"\"\n        try:\n            collection",
+      "tokens": 0,
+      "firstFile": {
+        "name": "infrastructure/vector_stores/chroma_store.py",
+        "start": 221,
+        "end": 227,
+        "startLoc": {
+          "line": 221,
+          "column": 34,
+          "position": 1850
+        },
+        "endLoc": {
+          "line": 227,
+          "column": 11,
+          "position": 1935
+        }
+      },
+      "secondFile": {
+        "name": "infrastructure/vector_stores/qdrant_store.py",
+        "start": 205,
+        "end": 211,
+        "startLoc": {
+          "line": 205,
+          "column": 34,
+          "position": 1656
+        },
+        "endLoc": {
+          "line": 211,
+          "column": 7,
+          "position": 1741
+        }
+      }
+    },
+    {
+      "format": "python",
+      "lines": 21,
+      "fragment": ",\n                include=[\"documents\", \"metadatas\", \"distances\"]\n            )\n            \n            # Convert results to standard format\n            documents = []\n            if results['ids'] and len(results['ids'][0]) > 0:\n                for i in range(len(results['ids'][0])):\n                    doc = {\n                        \"id\": results['ids'][0][i],\n                        \"score\": 1.0 - results['distances'][0][i],  # Convert distance to similarity\n                        \"text\": results['documents'][0][i],\n                        \"metadata\": results['metadatas'][0][i] if results['metadatas'] else {},\n                        \"source\": results['metadatas'][0][i].get(\"source\", \"\") if results['metadatas'] else \"\",\n                        \"timestamp\": results['metadatas'][0][i].get(\"timestamp\", \"\") if results['metadatas'] else \"\"\n                    }\n                    documents.append(doc)\n            \n            return documents\n        except Exception as e:\n            logger.error(\"chroma_search_by_vector_failed\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "infrastructure/vector_stores/chroma_store.py",
+        "start": 232,
+        "end": 252,
+        "startLoc": {
+          "line": 232,
+          "column": 2,
+          "position": 1972
+        },
+        "endLoc": {
+          "line": 252,
+          "column": 33,
+          "position": 2242
+        }
+      },
+      "secondFile": {
+        "name": "infrastructure/vector_stores/chroma_store.py",
+        "start": 143,
+        "end": 163,
+        "startLoc": {
+          "line": 143,
+          "column": 6,
+          "position": 1103
+        },
+        "endLoc": {
+          "line": 163,
+          "column": 23,
+          "position": 1373
+        }
+      }
+    },
+    {
+      "format": "python",
+      "lines": 12,
+      "fragment": "try:\n            orch = get_orchestrator()\n            task_status = orch.get_task_status(task_id)\n            \n            if not task_status:\n                raise HTTPException(status_code=404, detail=\"Task not found\")\n            \n            return task_status\n        except HTTPException:\n            raise\n        except Exception as e:\n            raise HTTPException(status_code=500, detail=f\"Task status retrieval failed: {str(e)}\"",
+      "tokens": 0,
+      "firstFile": {
+        "name": "api/routes.py",
+        "start": 288,
+        "end": 299,
+        "startLoc": {
+          "line": 288,
+          "column": 9,
+          "position": 2287
+        },
+        "endLoc": {
+          "line": 299,
+          "column": 41,
+          "position": 2375
+        }
+      },
+      "secondFile": {
+        "name": "api/routes.py",
+        "start": 191,
+        "end": 202,
+        "startLoc": {
+          "line": 191,
+          "column": 9,
+          "position": 1470
+        },
+        "endLoc": {
+          "line": 202,
+          "column": 34,
+          "position": 1558
+        }
+      }
+    },
+    {
+      "format": "python",
+      "lines": 17,
+      "fragment": ",\n                    timestamp=datetime.now(),\n                    components=[\n                        ComponentStatusResponse(\n                            name=\"api\",\n                            type=\"service\",\n                            status=ComponentStatus.RUNNING,\n                            healthy=True,\n                            last_activity=time.time(),\n                            error_count=0,\n                            last_error=None,\n                            metrics={}\n                        ),\n                        ComponentStatusResponse(\n                            name=\"orchestrator\",\n                            type=\"service\",\n                            status=ComponentStatus.RUNNING",
+      "tokens": 0,
+      "firstFile": {
+        "name": "api/main.py",
+        "start": 186,
+        "end": 202,
+        "startLoc": {
+          "line": 186,
+          "column": 8,
+          "position": 1284
+        },
+        "endLoc": {
+          "line": 202,
+          "column": 8,
+          "position": 1384
+        }
+      },
+      "secondFile": {
+        "name": "api/main.py",
+        "start": 152,
+        "end": 168,
+        "startLoc": {
+          "line": 152,
+          "column": 10,
+          "position": 1077
+        },
+        "endLoc": {
+          "line": 168,
+          "column": 13,
+          "position": 1177
+        }
+      }
+    },
+    {
+      "format": "python",
+      "lines": 19,
+      "fragment": ")\n                return HealthCheckResponse(\n                    status=SystemStatus.UNHEALTHY,\n                    timestamp=datetime.now(),\n                    components=[\n                        ComponentStatusResponse(\n                            name=\"api\",\n                            type=\"service\",\n                            status=ComponentStatus.RUNNING,\n                            healthy=True,\n                            last_activity=time.time(),\n                            error_count=0,\n                            last_error=None,\n                            metrics={}\n                        ),\n                        ComponentStatusResponse(\n                            name=\"orchestrator\",\n                            type=\"service\",\n                            status=ComponentStatus.ERROR",
+      "tokens": 0,
+      "firstFile": {
+        "name": "api/main.py",
+        "start": 215,
+        "end": 233,
+        "startLoc": {
+          "line": 215,
+          "column": 9,
+          "position": 1479
+        },
+        "endLoc": {
+          "line": 233,
+          "column": 6,
+          "position": 1593
+        }
+      },
+      "secondFile": {
+        "name": "api/main.py",
+        "start": 150,
+        "end": 168,
+        "startLoc": {
+          "line": 150,
+          "column": 42,
+          "position": 1063
+        },
+        "endLoc": {
+          "line": 168,
+          "column": 13,
+          "position": 1177
+        }
+      }
+    },
+    {
+      "format": "python",
+      "lines": 9,
+      "fragment": ", error=str(e), error_type=type(e).__name__)\n            return HealthCheckResponse(\n                status=SystemStatus.UNHEALTHY,\n                timestamp=datetime.now(),\n                components=[\n                    ComponentStatusResponse(\n                        name=\"api\",\n                        type=\"service\",\n                        status=ComponentStatus.ERROR",
+      "tokens": 0,
+      "firstFile": {
+        "name": "api/main.py",
+        "start": 246,
+        "end": 254,
+        "startLoc": {
+          "line": 246,
+          "column": 32,
+          "position": 1675
+        },
+        "endLoc": {
+          "line": 254,
+          "column": 6,
+          "position": 1745
+        }
+      },
+      "secondFile": {
+        "name": "api/main.py",
+        "start": 215,
+        "end": 223,
+        "startLoc": {
+          "line": 215,
+          "column": 34,
+          "position": 1461
+        },
+        "endLoc": {
+          "line": 223,
+          "column": 8,
+          "position": 1531
+        }
+      }
+    },
+    {
+      "format": "python",
+      "lines": 9,
+      "fragment": "def __init__(self, config: AgentConfig, system_config: SystemConfig, backend_manager: BackendManager):\n        self.config = config\n        self.system_config = system_config\n        self.backend_manager = backend_manager\n        self.redis_client = self.backend_manager.get_connection(\"redis\")\n        self.llm_manager = self.backend_manager.llm_manager\n        self.logger = structlog.get_logger(__name__).bind(agent=config.name)\n        \n        # Initialize code templates",
+      "tokens": 0,
+      "firstFile": {
+        "name": "agents/code_generator.py",
+        "start": 53,
+        "end": 61,
+        "startLoc": {
+          "line": 53,
+          "column": 5,
+          "position": 302
+        },
+        "endLoc": {
+          "line": 61,
+          "column": 28,
+          "position": 410
+        }
+      },
+      "secondFile": {
+        "name": "agents/evaluator.py",
+        "start": 68,
+        "end": 76,
+        "startLoc": {
+          "line": 68,
+          "column": 5,
+          "position": 391
+        },
+        "endLoc": {
+          "line": 76,
+          "column": 24,
+          "position": 499
+        }
+      }
+    }
+  ]
+}
