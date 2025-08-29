@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
 """
-Working Multi-Page Gradio UI for APISage - All UX Issues Resolved
+Fixed Multi-Page Gradio UI for APISage - Real LLM Integration Working
 """
 
 import os
 import json
 import time
-import re
 from pathlib import Path
 from typing import Optional, Dict, Any, Tuple
 import gradio as gr
 
+# Import APISage components for real LLM analysis
+from agents.api_analyzer import APIAnalyzer
+from config.settings import AgentConfig, SystemConfig
+
 
 def create_working_interface():
-    """Create working multi-page Gradio interface with all UX issues fixed"""
+    """Create working multi-page Gradio interface with real LLM integration"""
     
     with gr.Blocks(
         title="APISage - API Documentation Quality Analyzer",
@@ -118,15 +121,15 @@ def create_working_interface():
         
         # Header
         gr.HTML("""
-            <div class="main-header">
-                <h1>🚀 APISage - AI-Powered API Documentation Analyzer</h1>
-                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">
-                    Upload your API documentation and get comprehensive AI-powered quality analysis
-                </p>
-                <p style="font-size: 1rem; margin: 0.5rem 0 0 0; opacity: 0.8;">
-                    ✨ Real LLM Integration • 🎯 Professional Evaluation • 💡 Actionable Recommendations
-                </p>
-            </div>
+        <div class="main-header">
+            <h1>🚀 APISage - API Documentation Quality Analyzer</h1>
+            <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">
+                Upload your API documentation and get comprehensive quality analysis
+            </p>
+            <p style="font-size: 1rem; margin: 0.5rem 0 0 0; opacity: 0.8;">
+                Real AI Analysis - Powered by APISage LLM Engine
+            </p>
+        </div>
         """)
         
         # Analysis state
@@ -195,7 +198,7 @@ def create_working_interface():
                         
                         # API key validation
                         api_key_status = gr.HTML("", elem_classes=["status-info"])
-                
+                    
                     with gr.Column():
                         gr.HTML('<h2>🎛️ Analysis Settings</h2>')
                         temperature = gr.Slider(
@@ -209,13 +212,13 @@ def create_working_interface():
                         
                         # Configuration validation
                         config_validation = gr.HTML("", elem_classes=["status-info"])
-                
-                analyze_btn = gr.Button(
-                    "🔍 Analyze Documentation",
-                    variant="primary",
-                    size="lg",
-                    elem_classes=["primary-button"]
-                )
+                        
+                        analyze_btn = gr.Button(
+                            "🔍 Analyze Documentation",
+                            variant="primary", 
+                            size="lg",
+                            elem_classes=["primary-button"]
+                        )
             
             # Page 3: Results
             with gr.Tab("📊 Results", id="results_tab"):
@@ -327,25 +330,25 @@ def create_working_interface():
             )
         
         def generate_criteria_html_from_llm(analysis_result: dict) -> str:
-            """Generate criteria HTML from LLM analysis results"""
+            """Generate criteria HTML from real LLM analysis"""
             try:
-                criteria = analysis_result.get("criteria", {})
-                overall_score = analysis_result.get("overall_score", 0)
+                criteria = analysis_result.get('criteria', {})
+                overall_score = analysis_result.get('overall_score', 0)
                 
                 html_parts = [f"""
                 <div class="fade-in" style="padding: 1rem;">
-                    <h3>📊 AI Evaluation Results</h3>
+                    <h3>📊 AI Analysis Results</h3>
                     <div style="margin: 1rem 0; padding: 1rem; border-left: 4px solid #8b5cf6; background: rgba(139, 92, 246, 0.1);">
                         <strong>Overall Score: {overall_score}/100</strong>
-                        <p>Comprehensive AI-powered analysis completed</p>
+                        <p>AI-powered evaluation of your API documentation</p>
                     </div>
                 """]
                 
-                # Add each criterion with its score and description
+                # Add each criteria with color coding based on score
                 for criterion_name, criterion_data in criteria.items():
                     if isinstance(criterion_data, dict):
-                        score = criterion_data.get("score", 0)
-                        description = criterion_data.get("description", "No description available")
+                        score = criterion_data.get('score', 0)
+                        description = criterion_data.get('description', 'No description available')
                         
                         # Color coding based on score
                         if score >= 80:
@@ -360,7 +363,7 @@ def create_working_interface():
                         
                         html_parts.append(f"""
                         <div style="margin: 1rem 0; padding: 1rem; border-left: 4px solid {color}; background: {bg_color};">
-                            <strong>{criterion_name.title()}: {score}/100</strong>
+                            <strong>{criterion_name.replace('_', ' ').title()}: {score}/100</strong>
                             <p>{description}</p>
                         </div>
                         """)
@@ -371,55 +374,55 @@ def create_working_interface():
             except Exception as e:
                 return f"""
                 <div class="fade-in" style="padding: 1rem;">
-                    <h3>📊 AI Evaluation Results</h3>
-                    <div style="margin: 1rem 0; padding: 1rem; border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.1);">
-                        <strong>Error Processing Results</strong>
-                        <p>Could not parse AI analysis results: {str(e)}</p>
-                    </div>
+                    <h3>📊 Analysis Results</h3>
+                    <p>Error processing criteria: {str(e)}</p>
                 </div>
                 """
-
+        
         def generate_recommendations_html_from_llm(analysis_result: dict) -> str:
-            """Generate recommendations HTML from LLM analysis results"""
+            """Generate recommendations HTML from real LLM analysis"""
             try:
-                recommendations = analysis_result.get("recommendations", [])
+                recommendations = analysis_result.get('recommendations', [])
+                
+                if not recommendations:
+                    return """
+                    <div class="fade-in" style="padding: 1rem;">
+                        <h3>💡 Recommendations</h3>
+                        <p>No specific recommendations available from the analysis.</p>
+                    </div>
+                    """
                 
                 html_parts = ["""
                 <div class="fade-in" style="padding: 1rem;">
                     <h3>💡 AI-Generated Recommendations</h3>
                 """]
                 
-                if not recommendations:
-                    html_parts.append("""
-                    <div style="margin: 1rem 0; padding: 1rem; border-left: 4px solid #6b7280; background: rgba(107, 114, 128, 0.1);">
-                        <strong>No specific recommendations available</strong>
-                        <p>The AI analysis did not generate specific recommendations.</p>
-                    </div>
-                    """)
-                else:
-                    # Add each recommendation with priority-based styling
-                    for rec in recommendations:
-                        priority = rec.get("priority", "medium").lower()
-                        title = rec.get("title", "Recommendation")
-                        description = rec.get("description", "No description available")
+                # Priority colors
+                priority_colors = {
+                    'high': ('#ef4444', 'rgba(239, 68, 68, 0.1)'),
+                    'medium': ('#f59e0b', 'rgba(245, 158, 11, 0.1)'),
+                    'low': ('#10b981', 'rgba(16, 185, 129, 0.1)')
+                }
+                
+                for i, rec in enumerate(recommendations):
+                    if isinstance(rec, dict):
+                        priority = rec.get('priority', 'medium').lower()
+                        title = rec.get('title', f'Recommendation {i+1}')
+                        description = rec.get('description', 'No description available')
                         
-                        if priority == "high":
-                            color = "#ef4444"  # Red
-                            bg_color = "rgba(239, 68, 68, 0.1)"
-                            icon = "🚨"
-                        elif priority == "medium":
-                            color = "#f59e0b"  # Yellow
-                            bg_color = "rgba(245, 158, 11, 0.1)"
-                            icon = "⚡"
-                        else:
-                            color = "#10b981"  # Green
-                            bg_color = "rgba(16, 185, 129, 0.1)"
-                            icon = "✅"
+                        color, bg_color = priority_colors.get(priority, priority_colors['medium'])
                         
                         html_parts.append(f"""
                         <div style="margin: 1rem 0; padding: 1rem; border-left: 4px solid {color}; background: {bg_color};">
-                            <strong>{icon} {priority.title()} Priority: {title}</strong>
+                            <strong>{'🚨' if priority == 'high' else '⚡' if priority == 'medium' else '✅'} {priority.title()} Priority</strong>
+                            <p><strong>{title}</strong></p>
                             <p>{description}</p>
+                        </div>
+                        """)
+                    elif isinstance(rec, str):
+                        html_parts.append(f"""
+                        <div style="margin: 1rem 0; padding: 1rem; border-left: 4px solid #3b82f6; background: rgba(59, 130, 246, 0.1);">
+                            <p>{rec}</p>
                         </div>
                         """)
                 
@@ -429,17 +432,14 @@ def create_working_interface():
             except Exception as e:
                 return f"""
                 <div class="fade-in" style="padding: 1rem;">
-                    <h3>💡 AI-Generated Recommendations</h3>
-                    <div style="margin: 1rem 0; padding: 1rem; border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.1);">
-                        <strong>Error Processing Recommendations</strong>
-                        <p>Could not parse AI recommendations: {str(e)}</p>
-                    </div>
+                    <h3>💡 Recommendations</h3>
+                    <p>Error processing recommendations: {str(e)}</p>
                 </div>
                 """
         
-        # Enhanced analysis function with proper state management
+        # Enhanced analysis function with REAL LLM integration
         def analyze_documentation(file_input, manual_text, provider, api_key, model, temp, max_tok, state):
-            """Enhanced analysis function with proper state management"""
+            """Enhanced analysis function with REAL LLM integration"""
             
             # Prevent multiple simultaneous analyses
             if state.get("is_running", False):
@@ -470,135 +470,67 @@ def create_working_interface():
                 
                 yield get_progress_response(f"🔍 Analyzing {len(content)} characters...", 25)
                 
-                yield get_progress_response(f"🤖 Running AI analysis with {model}...", 50)
+                # Initialize APISage analyzer with real LLM
+                yield get_progress_response(f"🤖 Initializing APISage LLM engine...", 40)
                 
-                # Set API key for the analyzer
-                os.environ["OPENAI_API_KEY"] = api_key
-                
-                # Run the AI analysis directly
-                import openai
-                client = openai.OpenAI()
-                
-                # Create comprehensive prompt
-                prompt = f"""You are a senior API documentation expert with 10+ years of experience in technical writing, 
-developer experience, and API design. You specialize in evaluating documentation quality 
-from both technical accuracy and developer usability perspectives.
-
-Conduct a comprehensive evaluation of the provided API documentation. Analyze it through 
-the lens of a developer who needs to integrate with this API for the first time.
-
-Please evaluate the documentation based on these criteria:
-1. Completeness & Coverage (0-100)
-2. Clarity & Usability (0-100) 
-3. Authentication & Security (0-100)
-4. Examples & Code Samples (0-100)
-5. Error Handling & Troubleshooting (0-100)
-6. Developer Experience (0-100)
-7. Technical Accuracy (0-100)
-8. Supporting Resources (0-100)
-
-Provide your response as a valid JSON object with this structure:
-
-{{
-  "overall_score": <weighted average 0-100>,
-  "grade": "<A|B|C|D|F>",
-  "summary": "<comprehensive summary of findings>",
-  "criteria": {{
-    "completeness": {{"score": <0-100>, "description": "<detailed description>"}},
-    "clarity": {{"score": <0-100>, "description": "<detailed description>"}},
-    "security": {{"score": <0-100>, "description": "<detailed description>"}},
-    "examples": {{"score": <0-100>, "description": "<detailed description>"}},
-    "error_handling": {{"score": <0-100>, "description": "<detailed description>"}},
-    "developer_experience": {{"score": <0-100>, "description": "<detailed description>"}},
-    "technical_accuracy": {{"score": <0-100>, "description": "<detailed description>"}},
-    "supporting_resources": {{"score": <0-100>, "description": "<detailed description>"}}
-  }},
-  "recommendations": [
-    {{
-      "priority": "<high|medium|low>",
-      "title": "<recommendation title>",
-      "description": "<detailed description and actionable steps>"
-    }}
-  ]
-}}
-
-Documentation to analyze:
-{content}"""
-
-                # Make the LLM call
-                response = client.chat.completions.create(
-                    model=model,
-                    messages=[
-                        {"role": "system", "content": "You are an expert API documentation evaluator. Provide detailed analysis in JSON format."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    temperature=temp,
-                    max_tokens=max_tok,
-                    response_format={"type": "json_object"}
-                )
-                
-                # Parse the response
-                llm_content = response.choices[0].message.content
                 try:
-                    # Clean and parse JSON
-                    json_match = re.search(r'\{.*\}', llm_content, re.DOTALL)
-                    if json_match:
-                        analysis_result = json.loads(json_match.group(0))
+                    # Set environment variable for API key
+                    os.environ["OPENAI_API_KEY"] = api_key
+                    
+                    # Initialize the analyzer with proper configuration
+                    agent_config = AgentConfig(
+                        name="api_analyzer",
+                        model=model,
+                        temperature=temp,
+                        max_tokens=max_tok
+                    )
+                    
+                    system_config = SystemConfig()
+                    
+                    # Initialize the analyzer (we'll use the simplified version for now)
+                    analyzer = APIAnalyzer(agent_config, system_config, None)
+                    
+                    yield get_progress_response(f"🤖 Running AI analysis with {model}...", 60)
+                    
+                    # Run REAL LLM analysis using the synchronous method
+                    analysis_result = analyzer.analyze_documentation(
+                        content=content,
+                        model=model,
+                        temperature=temp,
+                        max_tokens=max_tok
+                    )
+                    
+                    yield get_progress_response("📊 Processing AI results...", 80)
+                    
+                    # Extract results from LLM analysis
+                    if analysis_result and isinstance(analysis_result, dict):
+                        # Extract score and grade
+                        overall_score = analysis_result.get('overall_score', 0)
+                        grade_val = analysis_result.get('grade', 'N/A')
+                        summary = analysis_result.get('summary', f"Analysis complete for {content_source}.")
+                        
+                        # Generate HTML from real LLM results
+                        criteria_html = generate_criteria_html_from_llm(analysis_result)
+                        recommendations_html = generate_recommendations_html_from_llm(analysis_result)
+                        
+                        raw_data = {
+                            "score": overall_score,
+                            "grade": grade_val,
+                            "summary": summary,
+                            "analysis_complete": True,
+                            "session_id": state["current_session"],
+                            "timestamp": time.time(),
+                            "llm_analysis": analysis_result
+                        }
+                        
+                        # Final success response with REAL LLM data
+                        yield get_success_response(overall_score, grade_val, summary, criteria_html, recommendations_html, raw_data)
                     else:
-                        analysis_result = json.loads(llm_content)
-                except:
-                    # Fallback result
-                    analysis_result = {
-                        "overall_score": 75,
-                        "grade": "C",
-                        "summary": "Analysis completed. Please check your API key and try again for detailed results.",
-                        "criteria": {
-                            "completeness": {"score": 75, "description": "Basic evaluation completed"},
-                            "clarity": {"score": 75, "description": "Basic evaluation completed"},
-                            "security": {"score": 75, "description": "Basic evaluation completed"},
-                            "examples": {"score": 75, "description": "Basic evaluation completed"},
-                            "error_handling": {"score": 75, "description": "Basic evaluation completed"},
-                            "developer_experience": {"score": 75, "description": "Basic evaluation completed"},
-                            "technical_accuracy": {"score": 75, "description": "Basic evaluation completed"},
-                            "supporting_resources": {"score": 75, "description": "Basic evaluation completed"}
-                        },
-                        "recommendations": [
-                            {
-                                "priority": "medium",
-                                "title": "Verify API Configuration",
-                                "description": "Check your OpenAI API key and model settings for better analysis results."
-                            }
-                        ]
-                    }
-                
-                yield get_progress_response("📊 Processing AI results...", 75)
-                
-                # Extract results from AI analysis
-                score = analysis_result.get("overall_score", 0)
-                grade_val = analysis_result.get("grade", "N/A")
-                summary = analysis_result.get("summary", f"Analysis complete for {content_source}")
-                
-                # Generate HTML from AI results
-                criteria_html = generate_criteria_html_from_llm(analysis_result)
-                recommendations_html = generate_recommendations_html_from_llm(analysis_result)
-                
-                raw_data = {
-                    "score": score,
-                    "grade": grade_val,
-                    "summary": summary,
-                    "analysis_complete": True,
-                    "session_id": state["current_session"],
-                    "timestamp": time.time(),
-                    "llm_analysis": analysis_result
-                }
-                
-                # Final success response with popup notification
-                success_response = get_success_response(score, grade_val, summary, criteria_html, recommendations_html, raw_data)
-                
-                # Add popup notification
-                gr.Info(f"🎉 Analysis Complete! Overall Score: {score}/100 (Grade: {grade_val})")
-                
-                yield success_response
+                        # Fallback if LLM analysis fails
+                        yield get_error_response("❌ LLM analysis failed to return valid results")
+                        
+                except Exception as llm_error:
+                    yield get_error_response(f"❌ LLM Analysis Error: {str(llm_error)}")
                 
             except Exception as e:
                 yield get_error_response(f"❌ Error during analysis: {str(e)}")
