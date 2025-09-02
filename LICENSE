@@ -1,16 +1,45 @@
-MIT License
+APISage Non-Commercial License
+==============================
 
-Copyright (c) 2024 RAG Documentation Assistant
+Copyright (c) 2024 APISage Team
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+of this software and associated documentation files (the "Software"), to use,
+copy, modify, merge, publish, and distribute the Software for non-commercial
+purposes, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. NON-COMMERCIAL USE ONLY: The Software may only be used for non-commercial
+   purposes. Commercial use, including but not limited to selling, licensing,
+   or monetizing the Software or any derivative works, is strictly prohibited.
+
+2. ORGANIZATIONAL USE: Organizations may use the Software internally for
+   their own non-commercial purposes, including:
+   - Internal API analysis and documentation
+   - Educational and research purposes
+   - Personal projects and learning
+   - Open source contributions
+
+3. REDISTRIBUTION: You may redistribute the Software under the same license
+   terms, provided that:
+   - The original copyright notice and this license are included
+   - No commercial use is made of the redistributed Software
+   - All recipients are bound by the same non-commercial restrictions
+
+4. DERIVATIVE WORKS: You may create derivative works based on the Software,
+   provided that:
+   - The derivative work is also licensed under this Non-Commercial License
+   - No commercial use is made of the derivative work
+   - The original copyright notice and this license are included
+
+5. CONTRIBUTIONS: Contributions to the Software are welcome and will be
+   licensed under the same Non-Commercial License terms.
+
+PROHIBITED USES:
+- Selling or licensing the Software for profit
+- Using the Software in commercial products or services
+- Monetizing any derivative works based on the Software
+- Using the Software to provide commercial API analysis services
+- Any use that generates revenue directly or indirectly from the Software
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -19,3 +48,5 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+For commercial licensing inquiries, please contact: teamalacrityai@gmail.com

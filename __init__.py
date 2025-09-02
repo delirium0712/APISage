@@ -1,22 +1,13 @@
 """
-APISage - Enterprise RAG Documentation Assistant
+APISage - AI-Powered OpenAPI Analysis
 
-A production-ready, multi-agent RAG system with intelligent document processing,
-auto-code generation, and comprehensive evaluation frameworks.
+A clean, focused API analysis tool using LLM for intelligent, context-aware analysis.
+
+Licensed under the APISage Non-Commercial License.
+See LICENSE file for details.
 """
 
-__version__ = "0.1.0"
+__version__ = "3.0.0"
 __author__ = "APISage Team"
-__description__ = "Enterprise RAG Documentation Assistant"
-
-# Import main components for easy access
-from .sdk import RAGSystem, PresetConfigs
-from .core.orchestrator import RAGOrchestrator, OrchestrationConfig
-
-__all__ = [
-    "RAGSystem",
-    "PresetConfigs", 
-    "RAGOrchestrator",
-    "OrchestrationConfig",
-]
-
+__description__ = "AI-Powered OpenAPI Analysis"
+__license__ = "Non-Commercial"

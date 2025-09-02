@@ -1,127 +1,69 @@
 [tool.poetry]
-name = "api-agent-framework"
-version = "1.0.0"
-description = "Self-Hosted AI Agent Framework for API Documentation & Knowledge Management"
-authors = ["API Agent Team <team@api-agent.dev>"]
-maintainers = ["API Agent Team <team@api-agent.dev>"]
+name = "apisage"
+version = "3.0.0"
+description = "AI-Powered OpenAPI Analysis Tool"
+authors = ["APISage Team <teamalacrityai@gmail.com>"]
 readme = "README.md"
-license = "MIT"
-keywords = ["ai", "api", "documentation", "rag", "vector-search", "llm"]
+license = "Non-Commercial"
+keywords = ["ai", "api", "openapi", "analysis", "llm", "fastapi", "gradio"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "License :: Other/Proprietary License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: Documentation",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
-include = [
-    "api/**/*",
-    "agents/**/*",
-    "core/**/*",
-    "config/**/*",
-    "infrastructure/**/*",
-    "sdk/**/*",
-    "utils/**/*"
-]
+package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<3.15"
 
 # Core Framework
 fastapi = "^0.115.2"
 uvicorn = {extras = ["standard"], version = "^0.27.0"}
+gunicorn = "^22.0.0"
 pydantic = "^2.5.0"
-pydantic-settings = "^2.1.0"
-python-multipart = "^0.0.18"
-python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 python-dotenv = "^1.0.0"
 
 # LLM & AI
 openai = "^1.0.0"
-anthropic = "^0.18.0"
-ollama = "^0.2.0"
-sentence-transformers = "^2.5.0"
-numpy = "^1.24.0"
-litellm = "^1.15.0"
-
-# Vector Database
-pymilvus = "^2.3.0"
-
-# Caching & State
-redis = "^5.0.0"
-aioredis = "^2.0.0"
 
 # API Documentation Parsers
 pyyaml = "^6.0.0"
-jsonschema = "^4.20.0"
-graphql-core = "^3.2.0"
+openapi-spec-validator = "^0.7.1"
 
-# Knowledge Base Integrations
-atlassian-python-api = "^3.41.0"
-notion-client = "^2.2.0"
-PyGithub = "^2.1.0"
-slack-sdk = "^3.26.0"
-google-auth = "^2.23.0"
-google-auth-oauthlib = "^1.1.0"
-google-auth-httplib2 = "^0.1.1"
-google-api-python-client = "^2.108.0"
+# Web Interface
+gradio = "^5.44.1"
 
-# Data Processing
-pandas = "^2.0.0"
-
-# Async & Performance
-aiohttp = "^3.9.0"
+# HTTP Client
 httpx = "^0.27.0"
 
-# Monitoring & Observability
-prometheus-client = "^0.19.0"
+# Logging
 structlog = "^24.1.0"
-
-# Security & Auth
-cryptography = "^41.0.0"
-bcrypt = "^4.0.0"
-PyJWT = "^2.8.0"
-
-# Utilities
-tenacity = "^8.2.0"
-click = "^8.1.0"
-rich = "^13.7.0"
-tqdm = "^4.66.0"
-python-dateutil = "^2.8.0"
-pytz = "^2023.3"
-
-# Optional Enhanced Features
-pypdf2 = "^3.0.0"
-openpyxl = "^3.1.0"
-pillow = "^10.0.0"
-gradio = "^5.44.1"
 
 [tool.poetry.group.dev.dependencies]
 # Development & Testing
 pytest = "^7.4.0"
 pytest-asyncio = "^0.21.0"
 pytest-cov = "^4.1.0"
-black = "^23.12.0"
+black = "^24.3.0"
 isort = "^5.13.0"
 flake8 = "^6.1.0"
 mypy = "^1.8.0"
 pre-commit = "^3.6.0"
 
 [tool.poetry.group.production.dependencies]
-gunicorn = "^21.0.0"
+
 
 [tool.poetry.urls]
-Homepage = "https://github.com/your-org/api-agent-framework"
-Documentation = "https://docs.api-agent.dev"
-Repository = "https://github.com/your-org/api-agent-framework"
-"Bug Tracker" = "https://github.com/your-org/api-agent-framework/issues"
+Homepage = "https://github.com/your-org/apisage"
+Documentation = "https://docs.apisage.dev"
+Repository = "https://github.com/your-org/apisage"
+"Bug Tracker" = "https://github.com/your-org/apisage/issues"
 
 [build-system]
 requires = ["poetry-core"]
@@ -166,7 +108,6 @@ warn_unreachable = true
 strict_equality = true
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]

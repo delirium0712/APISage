@@ -1,8 +1,8 @@
 """
 REST API module for the RAG system
+Simplified BGE-M3 enhanced version
 """
 
-from .models import *
-from .routes import create_api_router
+# from .models import *  # Removed - using inline models in main.py
 
-__all__ = ["create_api_router"]
+__all__ = ["models"]

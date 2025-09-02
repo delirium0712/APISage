@@ -1,0 +1,88 @@
+# OpenAPI Antipatterns Configuration
+# Move hardcoded business logic to configuration files
+
+antipatterns:
+  verb_in_endpoint:
+    description: "HTTP verbs in endpoint paths"
+    severity: "HIGH"
+    pattern: "/(get|create|update|delete|remove|fetch|retrieve|list)[A-Z]?"
+    fix: "Remove verbs from paths, use HTTP methods instead"
+    example:
+      bad: "/getUsers"
+      good: "/users"
+  
+  inconsistent_pluralization:
+    description: "Mixed singular/plural resource naming"
+    severity: "MEDIUM"
+    fix: "Use consistent plural forms for all resource collections"
+    example:
+      bad: "/user/{id} and /users"
+      good: "/users/{id} and /users"
+  
+  missing_versioning:
+    description: "No API versioning strategy"
+    severity: "HIGH"
+    fix: "Add versioning strategy (path or header)"
+    example:
+      bad: "/products"
+      good: "/v1/products"
+  
+  missing_pagination:
+    description: "List endpoints without pagination"
+    severity: "MEDIUM"
+    fix: "Add pagination parameters to list endpoints"
+    example:
+      bad: "GET /products"
+      good: "GET /products?page=1&limit=20"
+  
+  deep_nesting:
+    description: "Excessively nested resource paths"
+    severity: "MEDIUM"
+    pattern: "(/[^/]+){4,}"
+    fix: "Limit nesting to 3-4 levels maximum"
+    example:
+      bad: "/api/v1/users/123/orders/456/items/789"
+      good: "/api/v1/users/123/orders/456"
+
+# Industry-specific requirements
+industries:
+  fintech:
+    required_features:
+      - "authentication"
+      - "rate_limiting"
+      - "idempotency"
+      - "audit_logging"
+    compliance_hints:
+      - "PCI DSS"
+      - "SOC 2"
+      - "GDPR"
+  
+  healthcare:
+    required_features:
+      - "authentication"
+      - "encryption"
+      - "audit_logging"
+      - "consent_management"
+    compliance_hints:
+      - "HIPAA"
+      - "HL7 FHIR"
+  
+  ecommerce:
+    required_features:
+      - "authentication"
+      - "rate_limiting"
+      - "webhook_support"
+    compliance_hints:
+      - "PCI DSS"
+      - "GDPR"
+
+# Scoring weights
+scoring:
+  critical_penalty: 10
+  high_penalty: 7
+  medium_penalty: 4
+  low_penalty: 1
+  
+  # Category weights
+  validation_weight: 0.7
+  antipattern_weight: 0.3

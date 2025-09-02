@@ -1,57 +1,47 @@
-# API Agent Framework - Production Dockerfile
+# APISage - AI-Powered OpenAPI Analysis Tool
+# Production-ready container
+
 FROM python:3.11-slim
 
 # Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app
-ENV POETRY_VERSION=1.7.1
-ENV POETRY_HOME=/opt/poetry
-ENV POETRY_VENV=/opt/poetry-venv
-ENV POETRY_CACHE_DIR=/opt/.cache
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
+    build-essential \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry
-RUN python3 -m venv $POETRY_VENV \
-    && $POETRY_VENV/bin/pip install -U pip setuptools \
-    && $POETRY_VENV/bin/pip install "poetry==$POETRY_VERSION"
-
-# Add Poetry to PATH
-ENV PATH="${PATH}:${POETRY_VENV}/bin"
+# Create user
+RUN groupadd -r apisage && useradd -r -g apisage apisage
 
 # Set work directory
 WORKDIR /app
 
-# Copy Poetry configuration files
-COPY pyproject.toml poetry.lock* ./
-
-# Configure Poetry to not create virtual environment (we're in a container)
-RUN poetry config virtualenvs.create false
-
-# Install dependencies
-RUN poetry install --only=main --no-dev --no-interaction --no-ansi
+# Copy requirements and install dependencies
+COPY pyproject.toml poetry.lock ./
+RUN pip install poetry==1.8.3 && \
+    poetry export -f requirements.txt --output requirements.txt --without-hashes && \
+    pip install -r requirements.txt && \
+    rm requirements.txt
 
 # Copy application code
-COPY . .
+COPY --chown=apisage:apisage . .
 
-# Create necessary directories
-RUN mkdir -p /app/data /app/uploads /app/logs
+# Create logs directory
+RUN mkdir -p /app/logs && chown -R apisage:apisage /app/logs
 
-# Set permissions
-RUN chmod +x install.sh
+# Switch to non-root user
+USER apisage
 
-# Expose port
-EXPOSE 8080
+# Expose ports
+EXPOSE 8080 7860
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
-# Run the application
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Default command (can be overridden)
+CMD ["python", "-m", "uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8080"]

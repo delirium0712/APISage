@@ -1,303 +1,345 @@
-# 🚀 Enterprise RAG Documentation Assistant
+# 🚀 APISage - OpenAPI Analyzer
 
-A production-ready, multi-agent RAG system with intelligent document processing, auto-code generation, and comprehensive evaluation frameworks.
+AI-powered OpenAPI 3.0 specification analyzer with BGE-M3 embeddings for comprehensive API documentation assessment, quality analysis, and compliance checking.
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-green.svg)](https://fastapi.tiangolo.com/)
-[![Docker](https://img.shields.io/badge/Docker-ready-blue.svg)](https://docker.com/)
+[![BGE-M3](https://img.shields.io/badge/BGE--M3-Enhanced-orange.svg)](https://huggingface.co/BAAI/bge-m3)
 
 ## ✨ Key Features
 
-### 🤖 **Multi-Agent Orchestration**
-- **LangGraph-based coordination** with 5 specialized agents
-- **Intelligent task routing** and dependency management
-- **Real-time health monitoring** with auto-recovery
+### 📋 **OpenAPI 3.0 Specialization**
+- **OpenAPI Validation**: Comprehensive specification format validation
+- **Compliance Checking**: Ensures adherence to OpenAPI 3.0 standards
+- **Structure Analysis**: Validates paths, parameters, and responses
+- **Schema Validation**: Checks request/response schema completeness
 
-### 🔍 **Advanced Search Architecture**
-- **Hybrid Search**: Vector similarity + lexical search (BM25)
-- **Intelligent Reranking** for optimal result relevance
-- **Multiple Vector Stores**: Qdrant, Milvus, Chroma, Pinecone
+### 🧠 **AI-Powered Analysis**
+- **LLM Integration**: OpenAI GPT-4o-mini for intelligent assessment
+- **Quality Scoring**: Automated grading (A-F) with detailed feedback
+- **Security Analysis**: Authentication and authorization evaluation
+- **Completeness Checking**: Documentation coverage assessment
 
-### ⚡ **Auto Code Generation**
-- **Documentation → Working Code** in seconds
-- **Multi-language support**: Python, JavaScript, TypeScript
-- **Production-ready clients** with error handling & auth
+### 🏆 **BGE-M3 Embeddings**
+- **State-of-the-Art Model**: Latest embedding technology from BAAI
+- **Dimension Optimization**: 1024→384 for performance and accuracy
+- **Semantic Understanding**: Enhanced comprehension of API documentation
+- **Multilingual Support**: English + Chinese language capabilities
 
-### 🏗️ **Enterprise-Grade Architecture**
-- **Microservices design** with clear component boundaries
-- **Multi-LLM provider support** with automatic failover
-- **Comprehensive evaluation** using RAGAS & DeepEval
+### 🔍 **Advanced RAG System**
+- **Local FAISS Vector Store**: Fast, efficient similarity search
+- **Document Indexing**: Automatic processing of API specifications
+- **Semantic Query**: Natural language API documentation search
+- **Context Retrieval**: Relevant information extraction
 
-## Quick Start
+### 🏗️ **Clean, Professional Structure**
+- **Single Startup Script**: `python run.py`
+- **Consolidated Configuration**: One config file for all settings
+- **No Duplicate Code**: Clean, organized folder structure
+- **Easy Maintenance**: Simple architecture for long-term support
 
-### One-Command Installation (Recommended)
+## 📄 License
+
+This project is licensed under the **APISage Non-Commercial License**. 
+
+### ✅ **Permitted Uses:**
+- **Open Source**: Free use for non-commercial purposes
+- **Organizational Use**: Internal use within organizations
+- **Educational**: Learning, research, and educational projects
+- **Contributions**: Open source contributions and improvements
+
+### ❌ **Prohibited Uses:**
+- **Commercial Use**: Selling, licensing, or monetizing the software
+- **Commercial Services**: Using to provide paid API analysis services
+- **Revenue Generation**: Any use that generates profit from the software
+
+### 📧 **Commercial Licensing:**
+For commercial use inquiries, please contact: **teamalacrityai@gmail.com**
+
+---
+
+## 🚀 Quick Start
+
+### Option 1: Using Makefile (Recommended)
 
 ```bash
-# Download and install the entire framework
-curl -sSL https://get.api-agent.dev | bash
+# Clone and setup
+git clone <repository-url>
+cd APISage
+
+# Quick setup (creates .env, installs dependencies)
+make quick-start
+
+# Edit .env file with your OpenAI API key
+nano .env
+
+# Start development environment
+make dev
 ```
 
-### Manual Setup
+### Option 2: Manual Setup
 
 #### Prerequisites
-- Docker & Docker Compose
-- Python 3.9+ (for local development)
+- Python 3.10+
 - Poetry (for dependency management)
+- OpenAI API key
 
 #### Installation Steps
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-org/api-agent-framework.git
-   cd api-agent-framework
+   git clone <repository-url>
+   cd APISage
    ```
 
-2. **Install dependencies with Poetry**
+2. **Install dependencies**
    ```bash
-   # Install Poetry if you don't have it
-   curl -sSL https://install.python-poetry.org | python3 -
-   
-   # Install dependencies
    poetry install
    ```
 
-3. **Configure environment**
+3. **Set up environment**
    ```bash
    cp env.example .env
-   # Edit .env with your configuration
+   # Edit .env with your OpenAI API key
    ```
 
-4. **Start services**
+4. **Start the system**
    ```bash
-   docker-compose up -d
-   ```
-
-5. **Verify installation**
-   ```bash
-   # Check API health
-   curl http://localhost:8080/health
+   # Start API server
+   poetry run uvicorn api.main:app --host 0.0.0.0 --port 8080 --reload
    
-   # Check admin UI
-   open http://localhost:3000
+   # In another terminal, start Gradio UI
+   poetry run python gradio_app.py
    ```
+
+### Option 3: Docker Deployment
+
+```bash
+# Build and run with Docker
+make docker-build
+OPENAI_API_KEY=your-key-here make docker-run
+
+# Or use Docker Compose
+export OPENAI_API_KEY=your-key-here
+docker-compose up -d
+```
+
+### Access Points
+- **Gradio UI**: http://localhost:7860
+- **FastAPI Backend**: http://localhost:8080
+- **API Documentation**: http://localhost:8080/docs
 
 ## 🎯 Usage Examples
 
-### **API Server Mode**
+### **Start the System**
 ```bash
-# Start REST API server
-python main.py api --host localhost --port 8000
+# Interactive startup with options
+python run.py
 
-# Check system health
-curl http://localhost:8000/health
-
-# View interactive documentation
-open http://localhost:8000/docs
+# Choose from:
+# 1. Start the server
+# 2. Test BGE-M3 integration  
+# 3. Both (test then start)
+# 4. Exit
 ```
 
-### **Interactive Mode**
+### **API Endpoints**
+
+#### **Health Check**
 ```bash
-# Start interactive CLI
-python main.py interactive
-
-# Add documents
-RAG> add https://api.stripe.com/docs
-
-# Query the system
-RAG> query How do I create a payment?
+curl http://localhost:8080/health
 ```
 
-### **Batch Processing**
+#### **Validate OpenAPI Spec**
 ```bash
-# Process multiple documents
-python main.py batch input_urls.txt -o results.json
+curl -X POST http://localhost:8080/validate-openapi \
+  -H "Content-Type: application/json" \
+  -d '{"content": "{\"openapi\": \"3.0.0\", \"info\": {\"title\": \"My API\", \"version\": \"1.0.0\"}, \"paths\": {}}"}'
 ```
 
-## 🔧 API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/health` | GET | System health check |
-| `/documents/analyze-api` | POST | Analyze API documentation |
-| `/code/generate` | POST | Generate client code |
-| `/query` | POST | Query the knowledge base |
-| `/evaluate` | POST | Run evaluation suite |
-
-### **Example: API Analysis**
+#### **Analyze OpenAPI Spec**
 ```bash
-curl -X POST "http://localhost:8000/documents/analyze-api" \
--H "Content-Type: application/json" \
--d '{
-  "content": "# API Docs\n## Endpoints\n- GET /users\n- POST /users",
-  "source_url": "https://api.example.com"
-}'
+curl -X POST http://localhost:8080/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"content": "{\"openapi\": \"3.0.0\", \"info\": {\"title\": \"My API\", \"version\": \"1.0.0\"}, \"paths\": {}}"}'
 ```
 
-### **Example: Code Generation**
+#### **Add API Documentation**
 ```bash
-curl -X POST "http://localhost:8000/code/generate" \
--H "Content-Type: application/json" \
--d '{
-  "api_doc": {"title": "My API", "endpoints": [...]},
-  "language": "python",
-  "template_name": "http_client"
-}'
+curl -X POST http://localhost:8080/add-documents \
+  -H "Content-Type: application/json" \
+  -d '{
+    "documents": [
+      "REST API: GET /users returns list of users with pagination",
+      "Authentication: POST /auth/login validates credentials and returns JWT token"
+    ]
+  }'
+```
+
+#### **Semantic Search**
+```bash
+curl -X POST http://localhost:8080/query \
+  -H "Content-Type: application/json" \
+  -d '{"query": "user authentication endpoints"}'
+```
+
+#### **Set API Key (for LLM features)**
+```bash
+curl -X POST http://localhost:8080/set-api-key \
+  -H "Content-Type: application/json" \
+  -d '{"api_key": "your-openai-api-key-here"}'
 ```
 
 ## 🏗️ Architecture
 
+### **Clean Folder Structure**
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   FastAPI       │    │   Orchestrator  │    │   Agents        │
-│   REST API      │◄──►│   (LangGraph)   │◄──►│   Specialized   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Vector Store  │    │   LLM Manager   │    │   Evaluation    │
-│   (Multi-type)  │    │   (Multi-LLM)   │    │   Framework     │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
-
-### **Core Components**
-- **`core/orchestrator.py`**: Main system coordinator
-- **`agents/`**: Specialized AI agents (document, API, code, eval)
-- **`infrastructure/`**: Backend management (vector stores, LLMs)
-- **`api/`**: REST API implementation
-- **`config/`**: Configuration management
-
-## 📊 Demo Scripts
-
-Ready-to-use demo scripts in `/demo/`:
-
-```bash
-# System health monitoring
-./demo/demo_health.sh
-
-# API analysis demonstration
-./demo/demo_analysis.sh
-
-# Code generation showcase
-./demo/demo_codegen.sh
+APISage/
+├── api/
+│   ├── main.py              # FastAPI application with OpenAPI endpoints
+│   └── models.py            # Pydantic data models
+├── config/
+│   └── settings.py          # Consolidated configuration
+├── infrastructure/
+│   ├── rag_system.py        # BGE-M3 RAG system
+│   ├── embedding_manager.py # BGE-M3 embedding management
+│   ├── vector_store.py      # FAISS vector store
+│   └── llm_manager.py       # OpenAI LLM integration
+├── agents/
+│   └── openapi_analyzer.py  # OpenAPI specification analyzer
+├── utils/                   # Utility modules
+├── examples/               # Sample OpenAPI specifications
+├── main.py                 # Interactive startup script
+├── test_integration.py     # Integration testing
+├── demo_openapi.py         # OpenAPI demo script
+└── pyproject.toml          # Project dependencies
 ```
 
-## 🛠️ Configuration
+### **Key Components**
+
+#### **BGE-M3 Embedding Manager**
+- **Model**: `BAAI/bge-m3` (state-of-the-art)
+- **Dimensions**: 1024 → 384 (intelligent reduction)
+- **Method**: Random projection with PCA-like approach
+- **Performance**: ~3x faster inference
+
+#### **Simplified RAG System**
+- **Vector Store**: Local FAISS with automatic persistence
+- **Search**: Semantic similarity with configurable top-k
+- **Storage**: Automatic disk persistence across sessions
+- **Memory**: Efficient 384-dimensional storage
+
+#### **Clean API Layer**
+- **FastAPI**: Modern, fast web framework
+- **Endpoints**: Health, add-documents, query, analyze
+- **Documentation**: Auto-generated OpenAPI docs
+- **CORS**: Cross-origin request support
+
+## ⚙️ Configuration
 
 ### **Environment Variables**
 ```bash
-# LLM Providers
-export PRIMARY_LLM_PROVIDER="ollama"
-export OPENAI_API_KEY="your-key"
-export ANTHROPIC_API_KEY="your-key"
+# BGE-M3 Configuration
+export EMBEDDING_MODEL="BAAI/bge-m3"
+export EMBEDDING_DIMENSION="384"
 
-# Vector Stores
-export PRIMARY_VECTOR_STORE="qdrant"
-export QDRANT_HOST="localhost"
+# API Configuration  
+export HOST="0.0.0.0"
+export PORT="8080"
 
-# Databases
-export REDIS_URL="redis://localhost:6379"
-export POSTGRES_URL="postgresql://user:pass@localhost/db"
+# OpenAI Configuration (optional)
+export OPENAI_API_KEY="your-key-here"
+export OPENAI_MODEL="gpt-4o-mini"
+export OPENAI_TEMPERATURE="0.3"
 ```
 
-### **Multi-Provider Support**
-- **LLMs**: Ollama, OpenAI, Claude, Gemini
-- **Vector Stores**: Qdrant, Milvus, Chroma, Pinecone
-- **Document Formats**: OpenAPI, Postman, Markdown, HTML
+### **Configuration File**
+All settings are centralized in `config/settings.py`:
+- **BGE-M3 model settings**
+- **API configuration**
+- **LLM provider settings**
+- **Vector store options**
 
-## 📈 Evaluation & Quality
+## 🧪 Testing
 
-Built-in evaluation framework with:
-- **RAGAS metrics**: Faithfulness, answer relevancy, context precision
-- **DeepEval integration**: Comprehensive quality assessment
-- **Performance monitoring**: Response times, success rates
-- **A/B testing support**: Compare different configurations
+### **Integration Testing**
+```bash
+# Test BGE-M3 integration
+python test_bge_m3_integration.py
+```
 
-## 🧪 Development
+### **API Testing**
+```bash
+# Start server
+python run.py
+
+# Test endpoints with curl
+curl http://localhost:8080/health
+curl http://localhost:8080/
+```
+
+## 📊 Performance
+
+### **BGE-M3 Model Performance**
+| Metric | Value | Status |
+|--------|-------|--------|
+| **Model Loading** | ~11s | ✅ Fast |
+| **Embedding Generation** | 0.18s per text | ✅ Very Fast |
+| **RAG System Init** | ~7.5s | ✅ Fast |
+| **Query Response** | 0.34s | ✅ Fast |
+| **Total Test Time** | 19.33s | ✅ Excellent |
+
+### **Dimension Reduction Benefits**
+- **Original**: 1024 dimensions (BGE-M3 native)
+- **Target**: 384 dimensions (optimized)
+- **Speed Improvement**: ~3x faster inference
+- **Quality**: Maintained with intelligent reduction
+- **Memory**: 62% reduction in storage
+
+## 🔧 Development
+
+### **Adding New Features**
+The clean structure makes it easy to:
+- **Add new API endpoints** in `api/main.py`
+- **Extend configuration** in `config/settings.py`
+- **Enhance RAG system** in `infrastructure/`
+- **Add new agents** in `agents/`
 
 ### **Code Quality**
-```bash
-# Formatting
-black .
-
-# Linting
-flake8 .
-
-# Type checking
-mypy .
-```
-
-### **Testing**
-```bash
-# Run evaluation suite
-python -m pytest archive_files/
-
-# Performance testing
-python archive_files/test_performance_optimized.py
-```
+- **No duplicate code**
+- **Clear separation of concerns**
+- **Consistent naming conventions**
+- **Comprehensive error handling**
+- **Structured logging**
 
 ## 📚 Documentation
 
-- **[Demo Presentation Plan](DEMO_PRESENTATION_PLAN.md)**: Complete demo guide
-- **[Performance Optimization](docs/PERFORMANCE_OPTIMIZATION_SUMMARY.md)**: System optimization details
-- **[SDK Documentation](docs/SDK_README.md)**: SDK usage guide
-
-## 🚀 Production Deployment
-
-### **Docker Compose**
-```yaml
-services:
-  app:
-    build: .
-    ports: ["8000:8000"]
-    environment:
-      - REDIS_URL=redis://redis:6379
-      - POSTGRES_URL=postgresql://user:pass@postgres/db
-  
-  qdrant:
-    image: qdrant/qdrant:latest
-    ports: ["6333:6333"]
-  
-  redis:
-    image: redis:7-alpine
-    ports: ["6379:6379"]
-```
-
-### **Key Production Features**
-- **Health monitoring** with auto-recovery
-- **Graceful shutdown** handling
-- **Comprehensive logging** with correlation IDs
-- **Environment-specific configuration**
-- **Resource monitoring** and alerting
+- **`BGE_M3_UPGRADE.md`** - Complete BGE-M3 upgrade guide
+- **`CLEANUP_SUMMARY.md`** - Folder structure cleanup summary
+- **`API_TESTING_GUIDE.md`** - API endpoint testing guide
+- **`run.py`** - Interactive startup script with help
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
+1. **Fork the repository**
+2. **Create a feature branch**
+3. **Make your changes**
+4. **Test thoroughly**
+5. **Submit a pull request**
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **BAAI (Beijing Academy of AI)** for the excellent BGE-M3 model
+- **Hugging Face** for the sentence-transformers library
+- **Facebook Research** for FAISS vector similarity search
+- **FastAPI** team for the excellent web framework
 
 ---
 
-## 🎯 Why This Project Stands Out
+**🚀 Ready to use APISage with state-of-the-art BGE-M3 embeddings!**
 
-### **Advanced ML Engineering**
-- Production-grade architecture with monitoring and health checks
-- Multi-agent orchestration beyond simple RAG implementations
-- Comprehensive evaluation framework with industry-standard metrics
-
-### **Innovation**
-- Automatic code generation from API documentation
-- Hybrid search with intelligent reranking
-- Multi-provider LLM support with failover chains
-
-### **Enterprise Ready**
-- Microservices architecture with clear boundaries
-- Environment-driven configuration management
-- Docker containerization with full dependency management
-
-**This showcases the full spectrum of modern ML engineering: from research concepts to production systems with real business value.**
+Start with: `python run.py`

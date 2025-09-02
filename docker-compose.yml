@@ -1,129 +1,55 @@
+# APISage - AI-Powered OpenAPI Analysis Tool
+# Docker Compose configuration for easy deployment
+
 version: '3.8'
 
 services:
-  # Core AI Agent Service
-  api-agent-core:
-    build: .
+  apisage:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: apisage
     ports:
-      - "8080:8080"
+      - "8080:8080"  # FastAPI backend
+      - "7860:7860"  # Gradio UI
     environment:
-      - MILVUS_HOST=milvus
-      - MILVUS_PORT=19530
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - OLLAMA_HOST=http://ollama:11434
+      - PYTHONUNBUFFERED=1
     volumes:
-      - ./config:/app/config
-      - ./data:/app/data
-      - ./uploads:/app/uploads
-    depends_on:
-      - milvus
-      - redis
-      - ollama
+      - ./logs:/app/logs
+      - ./config:/app/config:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 40s
+    networks:
+      - apisage-network
 
-  # Milvus Vector Database
-  milvus:
-    image: milvusdb/milvus:v2.3.3
-    ports:
-      - "19530:19530"
-      - "9091:9091"
-    environment:
-      - ETCD_ENDPOINTS=etcd:2379
-      - MINIO_ADDRESS=minio:9000
-    volumes:
-      - milvus-data:/var/lib/milvus
-    depends_on:
-      - etcd
-      - minio
-    restart: unless-stopped
-
-  # Milvus Dependencies
-  etcd:
-    image: quay.io/coreos/etcd:v3.5.5
-    environment:
-      - ETCD_AUTO_COMPACTION_MODE=revision
-      - ETCD_AUTO_COMPACTION_RETENTION=1000
-      - ETCD_QUOTA_BACKEND_BYTES=4294967296
-    volumes:
-      - etcd-data:/etcd
-    restart: unless-stopped
-
-  minio:
-    image: minio/minio:RELEASE.2023-03-20T20-16-18Z
-    environment:
-      - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=minioadmin123
-    command: server /data --console-address ":9001"
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - minio-data:/data
-    restart: unless-stopped
-
-  # Redis for caching & state management
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
-    restart: unless-stopped
-    command: redis-server --appendonly yes
-
-  # Ollama for local LLM support
-  ollama:
-    image: ollama/ollama:latest
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama-data:/root/.ollama
-    restart: unless-stopped
-    environment:
-      - OLLAMA_HOST=0.0.0.0
-
-  # Admin Dashboard
-  admin-ui:
-    build: ./ui
-    ports:
-      - "3000:3000"
-    environment:
-      - REACT_APP_API_BACKEND=http://localhost:8080
-      - REACT_APP_MILVUS_CONSOLE=http://localhost:9001
-    depends_on:
-      - api-agent-core
-    restart: unless-stopped
-
-  # Nginx reverse proxy
+  # Optional: Add a reverse proxy for production
   nginx:
     image: nginx:alpine
+    container_name: apisage-nginx
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
     depends_on:
-      - api-agent-core
-      - admin-ui
+      - apisage
     restart: unless-stopped
-
-volumes:
-  milvus-data:
-  etcd-data:
-  minio-data:
-  redis-data:
-  ollama-data:
+    networks:
+      - apisage-network
+    profiles:
+      - production
 
 networks:
-  default:
-    name: api-agent-network
+  apisage-network:
+    driver: bridge
+
+volumes:
+  logs:
+    driver: local
