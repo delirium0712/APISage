@@ -1,5 +1,5 @@
 # APISage - AI-Powered OpenAPI Analysis Tool
-# Docker Compose configuration for easy deployment
+# Docker Compose configuration for local deployment
 
 version: '3.8'
 
@@ -28,7 +28,7 @@ services:
     networks:
       - apisage-network
 
-  # Optional: Add a reverse proxy for production
+  # Optional: Nginx reverse proxy (use with: docker-compose --profile production up)
   nginx:
     image: nginx:alpine
     container_name: apisage-nginx

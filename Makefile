@@ -1,7 +1,7 @@
 # APISage - AI-Powered OpenAPI Analysis Tool
 # Makefile for easy setup, development, and deployment
 
-.PHONY: help install dev build run stop clean test lint format docker-build docker-run docker-stop docker-clean
+.PHONY: help install quick-start dev build run stop clean test lint format docker-build docker-run docker-stop docker-clean docker-compose-up docker-compose-production docker-compose-down
 
 # Default target
 help: ## Show this help message
@@ -16,6 +16,26 @@ install: ## Install dependencies using Poetry
 	@echo "📦 Installing dependencies..."
 	poetry install
 	@echo "✅ Dependencies installed successfully!"
+
+quick-start: ## Quick setup for new users (install + create .env)
+	@echo "🚀 Setting up APISage for local use..."
+	@echo "📦 Installing dependencies..."
+	poetry install
+	@echo "📝 Creating .env file from template..."
+	@if [ ! -f .env ]; then \
+		cp env.example .env; \
+		echo "✅ Created .env file from template"; \
+		echo "⚠️  Please edit .env and add your OpenAI API key"; \
+		echo "   nano .env"; \
+	else \
+		echo "✅ .env file already exists"; \
+	fi
+	@echo ""
+	@echo "🎉 Setup complete! Next steps:"
+	@echo "1. Edit .env file: nano .env"
+	@echo "2. Add your OpenAI API key"
+	@echo "3. Start the app: make start"
+	@echo "4. Or use Docker: make docker-build && make docker-run"
 
 dev: ## Start development environment (API + Gradio)
 	@echo "🚀 Starting development environment..."
@@ -147,6 +167,35 @@ docker-clean: ## Clean up Docker resources
 		docker rmi apisage:latest; \
 	fi
 	@echo "✅ Docker cleanup completed!"
+
+docker-compose-up: docker-check ## Start APISage with Docker Compose (local deployment)
+	@echo "🐳 Starting APISage with Docker Compose..."
+	@if [ -z "$$OPENAI_API_KEY" ]; then \
+		echo "⚠️  Warning: OPENAI_API_KEY environment variable not set"; \
+		echo "💡 Set it with: export OPENAI_API_KEY=your-key-here"; \
+	fi
+	docker-compose up -d
+	@echo "✅ APISage started with Docker Compose!"
+	@echo "📡 API: http://localhost:8080"
+	@echo "🌐 UI: http://localhost:7860"
+	@echo "📚 API docs: http://localhost:8080/docs"
+
+docker-compose-production: docker-check ## Start APISage with Docker Compose + Nginx (production-like)
+	@echo "🐳 Starting APISage with Docker Compose + Nginx..."
+	@if [ -z "$$OPENAI_API_KEY" ]; then \
+		echo "⚠️  Warning: OPENAI_API_KEY environment variable not set"; \
+		echo "💡 Set it with: export OPENAI_API_KEY=your-key-here"; \
+	fi
+	docker-compose --profile production up -d
+	@echo "✅ APISage started with Docker Compose + Nginx!"
+	@echo "📡 API: http://localhost:8080"
+	@echo "🌐 UI: http://localhost:7860"
+	@echo "🌍 Nginx: http://localhost:80"
+
+docker-compose-down: ## Stop Docker Compose services
+	@echo "🛑 Stopping Docker Compose services..."
+	docker-compose down
+	@echo "✅ Docker Compose services stopped!"
 
 # Development tools
 test: ## Run tests

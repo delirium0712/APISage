@@ -60,12 +60,33 @@ For commercial use inquiries, please contact: **teamalacrityai@gmail.com**
 
 ## 🚀 Quick Start
 
-### Option 1: Using Makefile (Recommended)
+APISage is designed to run locally on your system. Choose your preferred method:
+
+### Option 1: Docker (Recommended for Easy Setup)
+
+```bash
+# Clone the repository
+git clone https://github.com/your-org/apisage.git
+cd apisage
+
+# Set your OpenAI API key
+export OPENAI_API_KEY="your-api-key-here"
+
+# Build and run with Docker
+make docker-build
+make docker-run
+
+# Access the application locally
+# API: http://localhost:8080
+# UI: http://localhost:7860
+```
+
+### Option 2: Local Python Environment
 
 ```bash
 # Clone and setup
-git clone <repository-url>
-cd APISage
+git clone https://github.com/your-org/apisage.git
+cd apisage
 
 # Quick setup (creates .env, installs dependencies)
 make quick-start
@@ -73,16 +94,31 @@ make quick-start
 # Edit .env file with your OpenAI API key
 nano .env
 
-# Start development environment
-make dev
+# Start the application
+make start
+
+# Access the application locally
+# API: http://localhost:8080
+# UI: http://localhost:7860
 ```
 
-### Option 2: Manual Setup
+### Option 3: Development Mode
+
+```bash
+# For contributors and developers
+make dev
+
+# This runs both API and UI in development mode with hot reload
+```
+
+### Manual Setup
 
 #### Prerequisites
 - Python 3.10+
 - Poetry (for dependency management)
 - OpenAI API key
+
+> 📖 **For detailed setup instructions, see [LOCAL_DEPLOYMENT.md](LOCAL_DEPLOYMENT.md)**
 
 #### Installation Steps
 
