@@ -13,6 +13,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from infrastructure.llm_manager import LLMRequest, SimpleLLMManager, ModelConfig
+from infrastructure.agentic_orchestrator import AgenticOrchestrator, create_agentic_orchestrator
+from infrastructure.realtime_sync import realtime_sync, SpecChange, SyncConfig
 from evaluation.llm_evaluator import LLMAnalysisEvaluator, EvaluationDashboard
 from typing import List
 
@@ -110,8 +112,9 @@ class EvaluationResponse(BaseModel):
     evaluator_model: str
 
 
-# Initialize LLM manager and evaluation system
+# Initialize LLM manager, orchestrator, and evaluation system
 llm_manager = SimpleLLMManager(model="o1-mini")  # Use o1-mini for optimal reasoning performance
+agentic_orchestrator = create_agentic_orchestrator(llm_manager)  # Multi-agent system
 evaluator = LLMAnalysisEvaluator(evaluator_model="o1-mini")  # Use same model for consistency  
 evaluation_dashboard = EvaluationDashboard()
 
@@ -676,6 +679,90 @@ async def analyze_with_evaluation(request: AnalysisRequest):
         raise HTTPException(
             status_code=500,
             detail=f"Analysis with evaluation failed: {str(e)}"
+        )
+
+
+@app.post("/analyze-agentic")
+async def analyze_agentic(request: AnalysisRequest):
+    """
+    Perform multi-agent collaborative API analysis
+    Uses specialized agents for comprehensive analysis
+    """
+    
+    try:
+        # Run collaborative analysis with multiple agents
+        orchestration_result = await agentic_orchestrator.collaborative_analysis(
+            api_spec=request.openapi_spec,
+            focus_areas=request.focus_areas,
+            parallel=True  # Faster processing
+        )
+        
+        # Format results for response
+        analysis_content = f"""# 🤖 Multi-Agent Collaborative Analysis
+
+## 📊 Overall Assessment
+**Collaborative Score:** {orchestration_result.overall_score:.1f}/100  
+**Agent Agreement:** {orchestration_result.agent_agreement_score:.1f}%  
+**Analysis Method:** {len(orchestration_result.agent_results)} specialized agents
+
+## 🔍 Agent Findings
+
+"""
+        
+        # Add findings from each agent
+        for agent_role, result in orchestration_result.agent_results.items():
+            analysis_content += f"### {agent_role.replace('_', ' ').title()}\n"
+            analysis_content += f"**Score:** {result.score:.1f}/100 | **Confidence:** {result.confidence:.1%}\n\n"
+            
+            for finding in result.findings[:3]:  # Top 3 findings per agent
+                analysis_content += f"- **{finding.get('title', 'Finding')}:** {finding.get('description', '')}\n"
+            
+            analysis_content += "\n"
+        
+        # Add collaboration insights
+        if orchestration_result.collaboration_insights:
+            analysis_content += "## 🧠 Collaboration Insights\n"
+            for insight in orchestration_result.collaboration_insights:
+                analysis_content += f"- {insight}\n"
+        
+        # Prepare metadata
+        metadata = {
+            "api_title": request.openapi_spec.get("info", {}).get("title", "Unknown API"),
+            "api_version": request.openapi_spec.get("info", {}).get("version", "Unknown"),
+            "endpoints_count": len(request.openapi_spec.get("paths", {})),
+            "analysis_depth": request.analysis_depth,
+            "focus_areas": request.focus_areas,
+            "analysis_method": "multi_agent_collaborative",
+            "agents_used": list(orchestration_result.agent_results.keys()),
+            "agent_agreement_score": orchestration_result.agent_agreement_score,
+            "total_processing_time": orchestration_result.total_processing_time,
+            "total_tokens": orchestration_result.total_tokens,
+            "model_used": llm_manager.default_model
+        }
+        
+        return AnalysisResponse(
+            status="success",
+            analysis=analysis_content,
+            key_findings={
+                "agent_consensus": orchestration_result.overall_score > 70,
+                "high_agreement": orchestration_result.agent_agreement_score > 80,
+                "critical_issues": sum(
+                    len([f for f in result.findings if f.get("severity") == "critical"])
+                    for result in orchestration_result.agent_results.values()
+                ),
+                "total_findings": sum(
+                    len(result.findings) 
+                    for result in orchestration_result.agent_results.values()
+                )
+            },
+            metadata=metadata
+        )
+        
+    except Exception as e:
+        logger.error("Agentic analysis failed", error=str(e), exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Multi-agent analysis failed: {str(e)}"
         )
 
 
