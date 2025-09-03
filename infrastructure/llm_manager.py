@@ -217,14 +217,20 @@ class SimpleLLMManager:
             )
 
         except Exception as e:
-            # Handle encoding issues more carefully - preserve important content
+            # Handle encoding issues and mask sensitive information
             error_str = str(e)
+            
+            # Mask API key in error messages for security
+            if self.api_key and len(self.api_key) > 10:
+                masked_key = self.api_key[:10] + "*" * (len(self.api_key) - 10)
+                error_str = error_str.replace(self.api_key, masked_key)
+            
             try:
                 # Only clean if there are actual encoding issues
                 error_str.encode('utf-8')
             except UnicodeEncodeError:
                 # Only then fall back to ASCII cleaning
-                error_str = str(e).encode('ascii', 'ignore').decode('ascii')
+                error_str = error_str.encode('ascii', 'ignore').decode('ascii')
                 
             logger.error(
                 "llm_generation_failed",

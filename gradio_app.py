@@ -1061,23 +1061,56 @@ def analyze_api_with_backend(spec_text: str, model: str, api_key: str, analysis_
         backend_analysis = None
         if api_key:
             try:
-                # Choose endpoint based on analysis method
-                endpoint = "/analyze-agentic" if analysis_method == "agentic" else "/analyze"
-                
-                response = requests.post(
-                    f"{API_BASE_URL}{endpoint}",
-                    json={
-                        "openapi_spec": spec_data,
-                        "model": model,
-                        "api_key": api_key,
-                        "analysis_depth": "comprehensive",
-                        "focus_areas": ["security", "performance", "documentation", "completeness", "standards"]
-                    },
-                    timeout=TIMEOUT
+                # First, ensure API key is set in backend
+                set_response = requests.post(
+                    f"{API_BASE_URL}/set-api-key",
+                    json={"api_key": api_key},
+                    timeout=10
                 )
-                if response.status_code == 200:
-                    backend_analysis = response.json()
-            except:
+                
+                if set_response.status_code == 200:
+                    # Choose endpoint based on analysis method
+                    endpoint = "/analyze-agentic" if analysis_method == "agentic" else "/analyze"
+                    
+                    response = requests.post(
+                        f"{API_BASE_URL}{endpoint}",
+                        json={
+                            "openapi_spec": spec_data,
+                            "model": model,
+                            "analysis_depth": "comprehensive",
+                            "focus_areas": ["security", "performance", "documentation", "completeness", "standards"]
+                        },
+                        timeout=TIMEOUT
+                    )
+                    if response.status_code == 200:
+                        backend_analysis = response.json()
+                    else:
+                        error_detail = response.text
+                        logger.warning(f"Analysis failed with status {response.status_code}: {error_detail}")
+                        # Update issues to show the error
+                        issues.append({
+                            "type": "analysis_error",
+                            "severity": "error",
+                            "title": "Analysis Failed",
+                            "description": f"Backend analysis failed: {error_detail}"
+                        })
+                else:
+                    error_detail = set_response.text
+                    logger.warning(f"Failed to set API key: {error_detail}")
+                    issues.append({
+                        "type": "api_key_error",
+                        "severity": "error", 
+                        "title": "API Key Error",
+                        "description": f"Failed to set API key: {error_detail}"
+                    })
+            except Exception as e:
+                logger.error(f"Backend analysis failed: {e}")
+                issues.append({
+                    "type": "connection_error",
+                    "severity": "error",
+                    "title": "Connection Error", 
+                    "description": f"Could not connect to backend: {str(e)}"
+                })
                 pass  # Fallback to local analysis
         
         # Generate UI components
