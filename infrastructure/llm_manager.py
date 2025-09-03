@@ -159,10 +159,15 @@ class SimpleLLMManager:
         optimized_request = self.optimize_request(request)
 
         try:
+            # Clean prompt content to avoid encoding issues
+            clean_prompt = optimized_request.prompt
+            # Replace problematic unicode characters with ASCII equivalents
+            clean_prompt = clean_prompt.replace("'", "'").replace("'", "'").replace(""", '"').replace(""", '"')
+            
             # Build the request parameters using optimized request
             completion_params = {
                 "model": optimized_request.model,
-                "messages": [{"role": "user", "content": optimized_request.prompt}],
+                "messages": [{"role": "user", "content": clean_prompt}],
                 "max_tokens": optimized_request.max_tokens,
             }
 
@@ -212,16 +217,25 @@ class SimpleLLMManager:
             )
 
         except Exception as e:
+            # Handle encoding issues more carefully - preserve important content
+            error_str = str(e)
+            try:
+                # Only clean if there are actual encoding issues
+                error_str.encode('utf-8')
+            except UnicodeEncodeError:
+                # Only then fall back to ASCII cleaning
+                error_str = str(e).encode('ascii', 'ignore').decode('ascii')
+                
             logger.error(
                 "llm_generation_failed",
-                error=str(e),
+                error=error_str,
                 model=optimized_request.model,
                 has_response_format=bool(optimized_request.response_format),
             )
             return LLMResponse(
-                content=f"LLM generation failed: {str(e)}",
+                content=f"LLM generation failed: {error_str}",
                 model=optimized_request.model,
-                error=str(e),
+                error=error_str,
             )
 
     def is_available(self) -> bool:

@@ -64,18 +64,52 @@ class SpecializedAgent:
         
         prompt = self._create_specialized_prompt(api_spec, focus_context)
         
-        # Use efficient model parameters
+        # Use efficient model parameters with structured JSON output
+        agent_schema = {
+            "type": "json_schema",
+            "json_schema": {
+                "name": f"{self.role.value}_analysis",
+                "strict": True,
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "findings": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {"type": "string"},
+                                    "severity": {"type": "string"},
+                                    "title": {"type": "string"},
+                                    "description": {"type": "string"},
+                                    "location": {"type": "string"},
+                                    "fix": {"type": "string"}
+                                },
+                                "required": ["type", "title", "description"],
+                                "additionalProperties": False
+                            }
+                        },
+                        "score": {"type": "number"},
+                        "confidence": {"type": "number"}
+                    },
+                    "required": ["findings", "score", "confidence"],
+                    "additionalProperties": False
+                }
+            }
+        }
+        
         llm_request = LLMRequest(
             prompt=prompt,
             max_tokens=1500,  # Focused analysis per agent
-            temperature=0.2   # Consistent analysis
+            temperature=0.2,  # Consistent analysis
+            response_format=agent_schema
         )
         
         try:
             response = await self.llm_manager.generate_response(llm_request)
             
-            # Parse agent response
-            findings, score, confidence = self._parse_agent_response(response)
+            # Parse structured agent response
+            findings, score, confidence = self._parse_structured_response(response)
             
             result = AgentResult(
                 agent_role=self.role.value,
@@ -104,89 +138,59 @@ class SpecializedAgent:
         
         base_info = self._extract_api_info(api_spec)
         role_prompts = {
-            AgentRole.SECURITY_ANALYST: f"""You are a cybersecurity expert analyzing API security.
+            AgentRole.SECURITY_ANALYST: f"""Analyze this API specification for security issues.
 
-API TO ANALYZE: {json.dumps(base_info, indent=2)}
+API SPECIFICATION: {json.dumps(base_info, indent=2)}
 
-Focus on:
-- Authentication/authorization mechanisms
-- Input validation and injection risks  
+Analyze the security aspects focusing on:
+- Authentication and authorization mechanisms
+- Input validation and security vulnerabilities
 - Rate limiting and abuse prevention
 - Data exposure and privacy concerns
-- CORS and cross-origin security
+- Security best practices compliance
 
-Provide JSON response:
-{{
-    "findings": [
-        {{
-            "type": "security_vulnerability|best_practice|missing_protection",
-            "severity": "critical|high|medium|low", 
-            "title": "Specific issue title",
-            "description": "Detailed technical explanation",
-            "location": "endpoint or global",
-            "fix": "Specific implementation steps",
-            "code_example": "Working code solution"
-        }}
-    ],
-    "security_score": 85,
-    "confidence": 0.9
-}}""",
+You must respond with a JSON object containing:
+- findings: array of security issues found
+- score: numerical score from 0-100
+- confidence: confidence level from 0.0-1.0
 
-            AgentRole.PERFORMANCE_ENGINEER: f"""You are a performance optimization expert.
+Each finding should include type, severity, title, description, location, and fix fields.""",
 
-API TO ANALYZE: {json.dumps(base_info, indent=2)}
+            AgentRole.PERFORMANCE_ENGINEER: f"""Analyze this API specification for performance optimization opportunities.
 
-Focus on:
+API SPECIFICATION: {json.dumps(base_info, indent=2)}
+
+Analyze performance aspects focusing on:
 - Response time optimization opportunities
-- Caching strategies and implementation
+- Caching strategies and implementation needs
 - Pagination and data loading efficiency
-- Database query optimization hints
-- Scalability bottlenecks
+- Scalability bottlenecks and concerns
+- Database and query optimization hints
 
-Provide JSON response:
-{{
-    "findings": [
-        {{
-            "type": "performance_issue|optimization|scalability_concern",
-            "impact": "critical|high|medium|low",
-            "title": "Performance issue",
-            "description": "Technical analysis", 
-            "location": "specific endpoint",
-            "fix": "Optimization steps",
-            "expected_improvement": "quantified benefit"
-        }}
-    ],
-    "performance_score": 75,
-    "confidence": 0.8
-}}""",
+You must respond with a JSON object containing:
+- findings: array of performance issues and optimization opportunities
+- score: numerical score from 0-100
+- confidence: confidence level from 0.0-1.0
 
-            AgentRole.DOCUMENTATION_REVIEWER: f"""You are a technical writing expert reviewing API documentation.
+Each finding should include type, severity, title, description, location, and fix fields.""",
 
-API TO ANALYZE: {json.dumps(base_info, indent=2)}
+            AgentRole.DOCUMENTATION_REVIEWER: f"""Analyze this API specification for documentation quality and completeness.
 
-Focus on:
+API SPECIFICATION: {json.dumps(base_info, indent=2)}
+
+Analyze documentation aspects focusing on:
 - Clarity and completeness of descriptions
 - Code examples and usage samples
-- Error response documentation  
+- Error response documentation completeness
 - Parameter descriptions and constraints
 - Developer onboarding experience
 
-Provide JSON response:
-{{
-    "findings": [
-        {{
-            "type": "missing_docs|unclear_description|missing_examples",
-            "priority": "critical|high|medium|low",
-            "title": "Documentation issue",
-            "description": "What's missing or unclear",
-            "location": "specific endpoint or global",
-            "fix": "Specific documentation to add",
-            "example": "Sample documentation text"
-        }}
-    ],
-    "documentation_score": 70,
-    "confidence": 0.9
-}}"""
+You must respond with a JSON object containing:
+- findings: array of documentation issues and improvements needed
+- score: numerical score from 0-100
+- confidence: confidence level from 0.0-1.0
+
+Each finding should include type, severity, title, description, location, and fix fields."""
         }
         
         return role_prompts.get(self.role, "Generic analysis prompt")
@@ -202,41 +206,65 @@ Provide JSON response:
             "schema_count": len(api_spec.get("components", {}).get("schemas", {}))
         }
     
-    def _parse_agent_response(self, response: str) -> tuple:
-        """Parse agent response into structured data"""
+    def _parse_structured_response(self, response: str) -> tuple:
+        """Parse structured JSON response from LLM"""
         try:
+            if response is None:
+                raise ValueError("Response is None")
+            
             data = json.loads(response)
+            
+            # Extract structured data
             findings = data.get("findings", [])
+            score = float(data.get("score", 0.0))
+            confidence = float(data.get("confidence", 0.0))
             
-            # Extract score based on agent type
-            score_keys = ["security_score", "performance_score", "documentation_score", "standards_score", "usability_score"]
-            score = next((data.get(key, 70) for key in score_keys if key in data), 70)
+            return findings, score, confidence
             
-            confidence = data.get("confidence", 0.7)
-            
-            return findings, float(score), float(confidence)
-            
-        except (json.JSONDecodeError, KeyError) as e:
-            logger.warning("Failed to parse agent response", error=str(e))
-            # Fallback parsing from text
+        except (json.JSONDecodeError, KeyError, ValueError, TypeError) as e:
+            # Log parsing failure and return failure result
+            error_str = str(e)
+            try:
+                error_str.encode('utf-8')
+            except UnicodeEncodeError:
+                error_str = str(e).encode('ascii', 'ignore').decode('ascii')
+                
+            logger.warning("Failed to parse structured response", error=error_str)
             return self._fallback_text_parsing(response)
+    
+    def _parse_agent_response(self, response: str) -> tuple:
+        """Legacy method - kept for compatibility"""
+        return self._parse_structured_response(response)
     
     def _fallback_text_parsing(self, response: str) -> tuple:
         """Fallback text parsing when JSON fails"""
+        # Handle None response
+        if response is None:
+            description = "No response received from LLM"
+        else:
+            description = str(response)[:500]
+        
         # Extract basic findings from text
-        findings = [{"type": "analysis", "title": "Agent Analysis", "description": response[:500]}]
-        score = 65.0  # Neutral score
-        confidence = 0.5  # Low confidence for fallback
+        findings = [{"type": "parsing_failure", "title": "Agent Response Parse Failed", "description": description}]
+        score = 0.0  # Zero score for parsing failure
+        confidence = 0.0  # No confidence for parsing failure
         
         return findings, score, confidence
     
     def _fallback_result(self, processing_time: float) -> AgentResult:
-        """Fallback result when agent fails"""
+        """Return genuine failure result when agent fails - no hardcoded analysis"""
         return AgentResult(
             agent_role=self.role.value,
-            findings=[{"type": "error", "title": "Analysis Failed", "description": "Agent encountered an error"}],
-            score=50.0,
-            confidence=0.1,
+            findings=[{
+                "type": "agent_failure",
+                "severity": "error",
+                "title": f"{self.role.value.replace('_', ' ').title()} Analysis Failed",
+                "description": "Agent analysis could not be completed due to LLM generation failure",
+                "location": "analysis_system",
+                "fix": "Check LLM configuration and API connectivity"
+            }],
+            score=0.0,  # No score when agent fails
+            confidence=0.0,  # Zero confidence for genuine failures
             processing_time=processing_time,
             token_usage=0
         )
