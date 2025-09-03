@@ -1044,7 +1044,7 @@ class APIAnalyzer:
             "crud_coverage": crud_coverage
         }
 
-def analyze_api_with_backend(spec_text: str, model: str, api_key: str) -> Tuple[str, str, str, str, str]:
+def analyze_api_with_backend(spec_text: str, model: str, api_key: str, analysis_method: str = "standard") -> Tuple[str, str, str, str, str]:
     """Analyze API with backend integration"""
     
     try:
@@ -1061,12 +1061,17 @@ def analyze_api_with_backend(spec_text: str, model: str, api_key: str) -> Tuple[
         backend_analysis = None
         if api_key:
             try:
+                # Choose endpoint based on analysis method
+                endpoint = "/analyze-agentic" if analysis_method == "agentic" else "/analyze"
+                
                 response = requests.post(
-                    f"{API_BASE_URL}/analyze",
+                    f"{API_BASE_URL}{endpoint}",
                     json={
                         "openapi_spec": spec_data,
                         "model": model,
-                        "api_key": api_key
+                        "api_key": api_key,
+                        "analysis_depth": "comprehensive",
+                        "focus_areas": ["security", "performance", "documentation", "completeness", "standards"]
                     },
                     timeout=TIMEOUT
                 )
@@ -1495,6 +1500,16 @@ def create_interface():
                         label="Model",
                     )
                     
+                    analysis_method = gr.Radio(
+                        choices=[
+                            ("Standard Analysis", "standard"),
+                            ("Multi-Agent Analysis (Slower but More Accurate)", "agentic")
+                        ],
+                        value="standard",
+                        label="Analysis Method",
+                        info="Multi-agent analysis uses specialized AI agents for deeper, more comprehensive analysis"
+                    )
+                    
                     sample_btn = gr.Button("📋 Load Sample", variant="secondary")
                     
                     gr.HTML('<div class="config-section"><div class="config-title">📝 API Specification</div></div>')
@@ -1547,7 +1562,7 @@ def create_interface():
             
             analyze_btn.click(
                 fn=analyze_api_with_backend,
-                inputs=[spec_input, model, api_key],
+                inputs=[spec_input, model, api_key, analysis_method],
                 outputs=[critical_issues, health_score, action_items, metrics_dashboard, detailed_analysis]
             )
             
