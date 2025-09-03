@@ -12,7 +12,9 @@ import structlog
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from infrastructure.llm_manager import LLMRequest, SimpleLLMManager
+from infrastructure.llm_manager import LLMRequest, SimpleLLMManager, ModelConfig
+from evaluation.llm_evaluator import LLMAnalysisEvaluator, EvaluationDashboard
+from typing import List
 
 # Configure logging
 structlog.configure(
@@ -31,6 +33,30 @@ structlog.configure(
 )
 
 logger = structlog.get_logger()
+
+
+def get_optimal_llm_params(model: str, base_max_tokens: int = 2000) -> Dict[str, Any]:
+    """Get optimal LLM parameters for the specified model"""
+    defaults = ModelConfig.get_model_defaults(model)
+
+    # Scale max_tokens based on model capabilities
+    optimal_max_tokens = defaults.get("max_tokens", base_max_tokens)
+
+    # For o1 models, use higher max_tokens for reasoning tasks
+    if ModelConfig.is_o1_model(model):
+        optimal_max_tokens = max(optimal_max_tokens, base_max_tokens * 2)
+
+    params = {
+        "max_tokens": optimal_max_tokens,
+        "model": model,
+    }
+
+    # Only add temperature for non-o1 models
+    if defaults.get("temperature") is not None:
+        params["temperature"] = defaults["temperature"]
+
+    return params
+
 
 # FastAPI app
 app = FastAPI(
@@ -68,8 +94,26 @@ class APIKeyResponse(BaseModel):
     is_set: bool
 
 
-# Initialize LLM manager
-llm_manager = SimpleLLMManager()
+class EvaluationRequest(BaseModel):
+    openapi_spec: Dict[str, Any]
+    llm_analysis: str
+    analysis_context: Optional[Dict[str, Any]] = None
+
+
+class EvaluationResponse(BaseModel):
+    status: str
+    overall_score: float
+    metric_scores: Dict[str, float]
+    detailed_feedback: str
+    improvement_suggestions: List[str]
+    evaluation_time: float
+    evaluator_model: str
+
+
+# Initialize LLM manager and evaluation system
+llm_manager = SimpleLLMManager(model="o1-mini")  # Use o1-mini for optimal reasoning performance
+evaluator = LLMAnalysisEvaluator(evaluator_model="o1-mini")  # Use same model for consistency  
+evaluation_dashboard = EvaluationDashboard()
 
 
 @app.get("/health")
@@ -80,6 +124,19 @@ async def health_check():
         "service": "APISage AI-Powered Analysis",
         "llm_available": llm_manager.is_available(),
     }
+
+
+@app.get("/models")
+async def get_available_models():
+    """Get list of available models"""
+    print("DEBUG: Models endpoint called!")  # Debug print
+    return {"models": ["gpt-4o", "gpt-4o-mini", "o1", "o1-mini", "o1-preview", "gpt-3.5-turbo"]}
+
+
+@app.get("/test")
+async def test_endpoint():
+    """Simple test endpoint"""
+    return {"message": "Test endpoint working"}
 
 
 @app.post("/set-api-key", response_model=APIKeyResponse)
@@ -413,7 +470,15 @@ async def analyze_specific_aspect(
     Format your response with clear sections and bullet points.
     """
 
-    llm_request = LLMRequest(prompt=prompt, max_tokens=2000, temperature=0.3)
+    # Get optimal parameters for the current model
+    current_model = llm_manager.default_model
+    optimal_params = get_optimal_llm_params(current_model, base_max_tokens=2000)
+
+    llm_request = LLMRequest(
+        prompt=prompt,
+        model=current_model,
+        **optimal_params
+    )
 
     response = await llm_manager.generate_response(llm_request)
 
@@ -443,7 +508,15 @@ async def compare_with_standard(spec: Dict[str, Any], standard: str = "REST"):
     Be specific and reference actual endpoints, not generic advice.
     """
 
-    llm_request = LLMRequest(prompt=prompt, max_tokens=2000, temperature=0.3)
+    # Get optimal parameters for the current model
+    current_model = llm_manager.default_model
+    optimal_params = get_optimal_llm_params(current_model, base_max_tokens=2000)
+
+    llm_request = LLMRequest(
+        prompt=prompt,
+        model=current_model,
+        **optimal_params
+    )
 
     response = await llm_manager.generate_response(llm_request)
 
@@ -473,11 +546,137 @@ async def suggest_improvements(spec: Dict[str, Any], goal: str):
     Focus on THIS specific API, not generic improvements.
     """
 
-    llm_request = LLMRequest(prompt=prompt, max_tokens=2500, temperature=0.4)
+    # Get optimal parameters for the current model
+    current_model = llm_manager.default_model
+    optimal_params = get_optimal_llm_params(current_model, base_max_tokens=2500)
+
+    llm_request = LLMRequest(
+        prompt=prompt,
+        model=current_model,
+        **optimal_params
+    )
 
     response = await llm_manager.generate_response(llm_request)
 
     return {"goal": goal, "improvements": response}
+
+
+@app.post("/evaluate-analysis", response_model=EvaluationResponse)
+async def evaluate_analysis(request: EvaluationRequest):
+    """Evaluate the quality of an LLM-generated API analysis"""
+    
+    try:
+        # Evaluate the analysis
+        evaluation_result = await evaluator.evaluate_analysis(
+            api_spec=request.openapi_spec,
+            llm_analysis=request.llm_analysis,
+            analysis_context=request.analysis_context
+        )
+        
+        # Record evaluation for dashboard
+        evaluation_dashboard.record_evaluation(
+            evaluation_result,
+            context=request.analysis_context
+        )
+        
+        logger.info(
+            "Analysis evaluation completed",
+            overall_score=evaluation_result.overall_score,
+            evaluation_time=evaluation_result.evaluation_time
+        )
+        
+        return EvaluationResponse(
+            status="success",
+            overall_score=evaluation_result.overall_score,
+            metric_scores=evaluation_result.metric_scores,
+            detailed_feedback=evaluation_result.detailed_feedback,
+            improvement_suggestions=evaluation_result.improvement_suggestions,
+            evaluation_time=evaluation_result.evaluation_time,
+            evaluator_model=evaluation_result.evaluator_model
+        )
+        
+    except Exception as e:
+        logger.error("Evaluation failed", error=str(e), exc_info=True)
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Evaluation failed: {str(e)}"
+        )
+
+
+@app.get("/evaluation-metrics")
+async def get_evaluation_metrics():
+    """Get overall evaluation performance metrics"""
+    
+    try:
+        metrics = evaluation_dashboard.get_performance_metrics()
+        
+        return {
+            "status": "success",
+            "metrics": metrics,
+            "dashboard_info": {
+                "total_evaluations": len(evaluation_dashboard.evaluation_history),
+                "evaluator_model": evaluator.evaluator_llm.default_model
+            }
+        }
+        
+    except Exception as e:
+        logger.error("Failed to get evaluation metrics", error=str(e))
+        return {
+            "status": "error",
+            "message": f"Failed to get metrics: {str(e)}",
+            "metrics": {}
+        }
+
+
+@app.post("/analyze-with-evaluation", response_model=Dict[str, Any])
+async def analyze_with_evaluation(request: AnalysisRequest):
+    """
+    Perform API analysis AND evaluate the quality of the analysis
+    Returns both the analysis and its evaluation
+    """
+    
+    try:
+        # First, perform the standard analysis
+        analysis_response = await analyze_api(request)
+        
+        # Then evaluate the analysis quality
+        evaluation_request = EvaluationRequest(
+            openapi_spec=request.openapi_spec,
+            llm_analysis=analysis_response.analysis,
+            analysis_context={
+                "analysis_depth": request.analysis_depth,
+                "focus_areas": request.focus_areas,
+                "api_title": analysis_response.metadata.get("api_title"),
+                "endpoints_count": analysis_response.metadata.get("endpoints_count")
+            }
+        )
+        
+        evaluation_response = await evaluate_analysis(evaluation_request)
+        
+        # Combine results
+        return {
+            "status": "success",
+            "analysis": {
+                "content": analysis_response.analysis,
+                "key_findings": analysis_response.key_findings,
+                "metadata": analysis_response.metadata
+            },
+            "evaluation": {
+                "overall_score": evaluation_response.overall_score,
+                "metric_scores": evaluation_response.metric_scores,
+                "detailed_feedback": evaluation_response.detailed_feedback,
+                "improvement_suggestions": evaluation_response.improvement_suggestions,
+                "evaluation_time": evaluation_response.evaluation_time,
+                "evaluator_model": evaluation_response.evaluator_model
+            }
+        }
+        
+    except Exception as e:
+        logger.error("Analysis with evaluation failed", error=str(e), exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Analysis with evaluation failed: {str(e)}"
+        )
 
 
 if __name__ == "__main__":

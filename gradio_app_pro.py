@@ -1052,10 +1052,9 @@ def analyze_api_with_backend(spec_text: str, model: str, api_key: str) -> Tuple[
         spec_data = json.loads(spec_text)
         api_title = spec_data.get("info", {}).get("title", "Unknown API")
         
-        # Extract issues and calculate score (simplified for now)
-        issues = []
-        score = 75  # Default score
-        metrics = {"endpoints": len(spec_data.get("paths", {}))}
+        # Extract issues and calculate score
+        issues, score = APIAnalyzer.extract_issues(spec_data)
+        metrics = APIAnalyzer.calculate_metrics(spec_data)
         
         # Try to call backend if available
         backend_analysis = None

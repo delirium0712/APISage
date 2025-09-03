@@ -32,6 +32,33 @@ class LLMRequest:
     response_format: Optional[Dict[str, Any]] = None  # For structured outputs
 
 
+class ModelConfig:
+    """Configuration for different model types"""
+
+    # O1 models don't support temperature parameter
+    O1_MODELS = {"o1", "o1-mini", "o1-preview"}
+
+    # Default configurations for different model types
+    DEFAULTS = {
+        "gpt-4o": {"max_tokens": 4000, "temperature": 0.3},
+        "gpt-4o-mini": {"max_tokens": 4000, "temperature": 0.3},
+        "o1": {"max_tokens": 10000, "temperature": None},  # O1 doesn't use temperature
+        "o1-mini": {"max_tokens": 8000, "temperature": None},
+        "o1-preview": {"max_tokens": 10000, "temperature": None},
+        "gpt-3.5-turbo": {"max_tokens": 4000, "temperature": 0.3},
+    }
+
+    @classmethod
+    def is_o1_model(cls, model: str) -> bool:
+        """Check if model is an O1 reasoning model"""
+        return model in cls.O1_MODELS
+
+    @classmethod
+    def get_model_defaults(cls, model: str) -> Dict[str, Any]:
+        """Get default configuration for a model"""
+        return cls.DEFAULTS.get(model, cls.DEFAULTS["gpt-4o-mini"])
+
+
 @dataclass
 class LLMResponse:
     """Simple LLM response structure"""
@@ -50,6 +77,12 @@ class SimpleLLMManager:
 
     def __init__(self, api_key: Optional[str] = None, model: str = "gpt-4o-mini"):
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
+
+        # Validate and set default model
+        if not self._is_valid_model(model):
+            logger.warning(f"Invalid model '{model}', falling back to gpt-4o-mini")
+            model = "gpt-4o-mini"
+
         self.default_model = model
         self.client: Optional[AsyncOpenAI] = None
 
@@ -67,6 +100,42 @@ class SimpleLLMManager:
                 "llm_manager_disabled", reason="OpenAI not available or API key missing"
             )
 
+    def _is_valid_model(self, model: str) -> bool:
+        """Validate if the model is supported"""
+        supported_models = set(ModelConfig.DEFAULTS.keys())
+        return model in supported_models
+
+    def optimize_request(self, request: LLMRequest) -> LLMRequest:
+        """
+        Optimize request parameters based on model type
+        Applies optimal defaults for o1 reasoning models
+        """
+        if not isinstance(request, LLMRequest):
+            return request
+
+        # Get model defaults
+        defaults = ModelConfig.get_model_defaults(request.model)
+
+        # Create optimized request with model-specific defaults
+        optimized = LLMRequest(
+            prompt=request.prompt,
+            model=request.model,
+            max_tokens=request.max_tokens or defaults["max_tokens"],
+            temperature=request.temperature if defaults["temperature"] is not None else 0.0,
+            response_format=request.response_format
+        )
+
+        # Log optimization for o1 models
+        if ModelConfig.is_o1_model(request.model):
+            logger.info(
+                "optimizing_o1_request",
+                model=request.model,
+                max_tokens=optimized.max_tokens,
+                temperature="N/A (o1 model)"
+            )
+
+        return optimized
+
     async def generate(self, request: LLMRequest) -> Optional[LLMResponse]:
         """
         Generate response from LLM with optional structured output
@@ -78,28 +147,42 @@ class SimpleLLMManager:
                 error="No API key or OpenAI client",
             )
 
+        # Validate model before proceeding
+        if not self._is_valid_model(request.model):
+            return LLMResponse(
+                content=f"Unsupported model: {request.model}",
+                model=request.model,
+                error=f"Model {request.model} is not supported",
+            )
+
+        # Optimize request parameters for the specific model
+        optimized_request = self.optimize_request(request)
+
         try:
-            # Build the request parameters
+            # Build the request parameters using optimized request
             completion_params = {
-                "model": request.model,
-                "messages": [{"role": "user", "content": request.prompt}],
-                "max_tokens": request.max_tokens,
-                "temperature": request.temperature,
+                "model": optimized_request.model,
+                "messages": [{"role": "user", "content": optimized_request.prompt}],
+                "max_tokens": optimized_request.max_tokens,
             }
+
+            # O1 models don't support temperature parameter
+            if not ModelConfig.is_o1_model(optimized_request.model):
+                completion_params["temperature"] = optimized_request.temperature
 
             # Add response_format for structured outputs if provided
             # This uses the correct OpenAI Chat Completions API with response_format parameter
-            if request.response_format:
-                completion_params["response_format"] = request.response_format
+            if optimized_request.response_format:
+                completion_params["response_format"] = optimized_request.response_format
                 schema_props = (
-                    request.response_format.get("json_schema", {})
+                    optimized_request.response_format.get("json_schema", {})
                     .get("schema", {})
                     .get("properties", {})
                 )
                 logger.info(
                     "using_structured_output",
-                    response_format_type=request.response_format.get("type"),
-                    schema_name=request.response_format.get("json_schema", {}).get(
+                    response_format_type=optimized_request.response_format.get("type"),
+                    schema_name=optimized_request.response_format.get("json_schema", {}).get(
                         "name"
                     ),
                     schema_properties=list(schema_props.keys()) if schema_props else [],
@@ -114,7 +197,7 @@ class SimpleLLMManager:
 
             return LLMResponse(
                 content=content,
-                model=response.model,
+                model=response.model or optimized_request.model,
                 usage={
                     "prompt_tokens": response.usage.prompt_tokens
                     if response.usage
@@ -132,12 +215,12 @@ class SimpleLLMManager:
             logger.error(
                 "llm_generation_failed",
                 error=str(e),
-                model=request.model,
-                has_response_format=bool(request.response_format),
+                model=optimized_request.model,
+                has_response_format=bool(optimized_request.response_format),
             )
             return LLMResponse(
                 content=f"LLM generation failed: {str(e)}",
-                model=request.model,
+                model=optimized_request.model,
                 error=str(e),
             )
 
