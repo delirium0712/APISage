@@ -1,7 +1,7 @@
 # APISage - AI-Powered OpenAPI Analysis Tool
 # Production-ready container
 
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
