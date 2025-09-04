@@ -30,7 +30,7 @@ pydantic = "^2.5.0"
 python-dotenv = "^1.0.0"
 
 # LLM & AI
-openai = "^1.0.0"
+openai = "^1.105.0"
 
 # API Documentation Parsers
 pyyaml = "^6.0.0"
